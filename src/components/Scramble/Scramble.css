@@ -1,16 +1,18 @@
-.lastbtn {
-  padding: 5px;
+.navBtn {
+  font-size: 1vw;
 }
 
+.lastbtn,
 .next,
 .last {
-  font-size: 1rem;
   padding: 5px;
+}
+.next,
+.last {
   color: #0000ff;
   cursor: pointer;
   user-select: none;
 }
-
 
 .next:hover,
 .last:hover {
@@ -19,7 +21,29 @@
 }
 
 .scramble {
-  font-size: 2.5rem;
+  font-size: 4vh;
   margin-bottom: 0%;
   margin-top: 0%;
+}
+
+@media only screen and (max-width: 1200px) {
+  .navBtn {
+    font-size: 2vw;
+  }
+}
+@media only screen and (max-width: 800px) {
+  .navBtn {
+    font-size: 3vw;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .navBtn {
+    font-size: 4vw;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .scramble {
+    font-size: 10vw;
+  }
 }

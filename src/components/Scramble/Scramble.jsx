@@ -22,23 +22,25 @@ const Scramble = ({ toScramble }) => {
 
   return (
     <>
-      <span
-        className={lastScramble ? "last" : "lastbtn"}
-        onClick={() => {
-          if (lastScramble) {
-            setScramble(lastScramble);
-            setLastScramble("");
-          }
-        }}
-      >
-        Last
-      </span>
-      /
-      <span className='next' onClick={generateScramble}>
-        Next
-      </span>
-      <p className='scramble'>{scramble}</p>
-      <hr />
+      <p className='navBtn'>
+        <span
+          className={lastScramble ? "last" : "lastbtn"}
+          onClick={() => {
+            if (lastScramble) {
+              setScramble(lastScramble);
+              setLastScramble("");
+            }
+          }}
+        >
+          Last
+        </span>
+        /
+        <span className='next' onClick={generateScramble}>
+          Next
+        </span>
+        <p className='scramble'>{scramble}</p>
+        <hr />
+      </p>
     </>
   );
 };

@@ -57,8 +57,6 @@ const Timer = ({ onTimerStopped }) => {
     }
   };
 
-
-
   useEffect(() => {
     window.addEventListener("keydown", spaceDown);
     window.addEventListener("keyup", spaceUp);
