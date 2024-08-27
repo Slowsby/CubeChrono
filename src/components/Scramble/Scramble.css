@@ -1,3 +1,7 @@
+.lastbtn {
+  padding: 5px;
+}
+
 .next,
 .last {
   font-size: 1rem;
@@ -6,6 +10,7 @@
   cursor: pointer;
   user-select: none;
 }
+
 
 .next:hover,
 .last:hover {

@@ -23,7 +23,7 @@ const Scramble = ({ toScramble }) => {
   return (
     <>
       <span
-        className={lastScramble ? "last" : ""}
+        className={lastScramble ? "last" : "lastbtn"}
         onClick={() => {
           if (lastScramble) {
             setScramble(lastScramble);

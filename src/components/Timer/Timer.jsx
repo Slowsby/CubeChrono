@@ -31,8 +31,8 @@ const Timer = ({ onTimerStopped }) => {
     secondsPassed = (now - startTime) / 1000;
   }
 
-  const spaceDown = ({ code }) => {
-    if (code === "Space") {
+  const spaceDown = (e) => {
+    if (e.code === "Space" || e.type === "touchstart") {
       setSpaceHeld(true);
       if (isRunning) {
         setRunning(false);
@@ -47,8 +47,8 @@ const Timer = ({ onTimerStopped }) => {
     }
   };
 
-  const spaceUp = ({ code }) => {
-    if (code === "Space") {
+  const spaceUp = (e) => {
+    if (e.code === "Space" || e.type === "touchend") {
       setSpaceHeld(false);
       if (!isRunning && !ignoreSpaceUp) {
         setRunning(true);
@@ -57,12 +57,18 @@ const Timer = ({ onTimerStopped }) => {
     }
   };
 
+
+
   useEffect(() => {
     window.addEventListener("keydown", spaceDown);
     window.addEventListener("keyup", spaceUp);
+    window.addEventListener("touchstart", spaceDown);
+    window.addEventListener("touchend", spaceUp);
     return () => {
       window.removeEventListener("keydown", spaceDown);
       window.removeEventListener("keyup", spaceUp);
+      window.removeEventListener("touchstart", spaceDown);
+      window.removeEventListener("touchend", spaceUp);
     };
   }, [ignoreSpaceUp, isRunning]);
 
