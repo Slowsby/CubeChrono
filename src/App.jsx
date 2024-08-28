@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import Scramble from "./components/Scramble/Scramble";
 import Timer from "./components/Timer/Timer";
-import Average from "./components/History/Average";
+import Average from "./components/Average/Average";
 
 const App = () => {
   const [toScramble, setToScramble] = useState(false);
