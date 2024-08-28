@@ -21,9 +21,11 @@ const Timer = ({ onTimerStopped }) => {
     }, 10);
   };
 
+  // When timer stops, export time then clear interval.
   const handleStop = () => {
+    const solvingTime = ((Date.now() - startTime) / 1000).toFixed(3);
+    onTimerStopped(solvingTime);
     clearInterval(intervalRef.current);
-    onTimerStopped();
   };
 
   let secondsPassed = 0;
@@ -36,7 +38,7 @@ const Timer = ({ onTimerStopped }) => {
       setSpaceHeld(true);
       if (isRunning) {
         setRunning(false);
-        handleStop();
+        handleStop(secondsPassed);
         setIgnoreSpaceUp(true);
         setIgnore(true);
         setTimeout(() => {
@@ -88,7 +90,7 @@ const Timer = ({ onTimerStopped }) => {
 
   return (
     <p className='timer' style={{ color: isSpaceHeld ? color : "" }}>
-      {secondsPassed.toFixed(2)}
+      {isRunning ? secondsPassed.toFixed(1) : secondsPassed.toFixed(2)}
     </p>
   );
 };

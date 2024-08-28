@@ -1,0 +1,23 @@
+.averageOfFive,
+.averageOfTwelve {
+  display: flex;
+  justify-content: center;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 2vw;
+  font-family: monospace;
+}
+
+@media only screen and (max-width: 1000px) {
+  .averageOfFive,
+  .averageOfTwelve {
+    font-size: 4vw;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .averageOfFive,
+  .averageOfTwelve {
+    font-size: 6vw;
+  }
+}

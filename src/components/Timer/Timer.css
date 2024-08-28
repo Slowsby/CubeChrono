@@ -3,6 +3,7 @@
   font-family: monospace;
   cursor: pointer;
   user-select: none;
+  margin-bottom: 5%;
 }
 
 @media only screen and (max-width: 1000px) {

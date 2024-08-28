@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { randomScrambleForEvent } from "cubing/scramble";
 import "./Scramble.css";
 
-const Scramble = ({ toScramble }) => {
+const Scramble = ({ toScramble, onScrambleGenerated }) => {
   const [scramble, setScramble] = useState("");
   const [lastScramble, setLastScramble] = useState("");
 
@@ -10,6 +10,7 @@ const Scramble = ({ toScramble }) => {
     setLastScramble(scramble);
     const toGenerate = await randomScrambleForEvent("333");
     setScramble(toGenerate.toString());
+    onScrambleGenerated(toGenerate.toString());
   };
 
   useEffect(() => {
@@ -28,6 +29,7 @@ const Scramble = ({ toScramble }) => {
           onClick={() => {
             if (lastScramble) {
               setScramble(lastScramble);
+              onScrambleGenerated(lastScramble);
               setLastScramble("");
             }
           }}
