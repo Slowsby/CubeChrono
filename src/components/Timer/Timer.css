@@ -1,7 +1,6 @@
 .timer {
   font-size: 10vw;
   font-family: monospace;
-  cursor: pointer;
   user-select: none;
   margin-bottom: 5%;
 }

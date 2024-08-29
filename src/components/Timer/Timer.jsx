@@ -1,4 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import "./Timer.css";
 
 const Timer = ({ onTimerStopped }) => {
@@ -21,10 +24,7 @@ const Timer = ({ onTimerStopped }) => {
     }, 10);
   };
 
-  // When timer stops, export time then clear interval.
   const handleStop = () => {
-    const solvingTime = ((Date.now() - startTime) / 1000).toFixed(3);
-    onTimerStopped(solvingTime);
     clearInterval(intervalRef.current);
   };
 
@@ -33,14 +33,15 @@ const Timer = ({ onTimerStopped }) => {
     secondsPassed = (now - startTime) / 1000;
   }
 
+  //Stops the timer on Space DOWN.
   const spaceDown = (e) => {
     if (e.code === "Space" || e.type === "touchstart") {
       setSpaceHeld(true);
       if (isRunning) {
         setRunning(false);
-        handleStop(secondsPassed);
-        setIgnoreSpaceUp(true);
-        setIgnore(true);
+        handleStop();
+        setIgnoreSpaceUp(true); // Stops the spaceUP function to run
+        setIgnore(true); // Stops the color from turning green on timer stop
         setTimeout(() => {
           setIgnoreSpaceUp(false);
           setIgnore(false);
@@ -49,6 +50,7 @@ const Timer = ({ onTimerStopped }) => {
     }
   };
 
+  // Starts the timer on Space UP
   const spaceUp = (e) => {
     if (e.code === "Space" || e.type === "touchend") {
       setSpaceHeld(false);
@@ -58,6 +60,14 @@ const Timer = ({ onTimerStopped }) => {
       }
     }
   };
+
+  // If a startTime exists and the timer stopped running, it exports the current time
+  useEffect(() => {
+    if (!isRunning && startTime) {
+      const solvingTime = ((now - startTime) / 1000).toFixed(2);
+      onTimerStopped(solvingTime);
+    }
+  }, [isRunning]);
 
   useEffect(() => {
     window.addEventListener("keydown", spaceDown);
@@ -72,12 +82,13 @@ const Timer = ({ onTimerStopped }) => {
     };
   }, [ignoreSpaceUp, isRunning]);
 
+  // Turns the timer red on Space DOWN
   useEffect(() => {
     if (isSpaceHeld && !isRunning && !ignore) {
       setColor("red");
-      setIgnoreSpaceUp(true);
+      setIgnoreSpaceUp(true); // Ignore Space UP for 350ms to not accidentally start the timer
       const timer = setTimeout(() => {
-        setColor("green");
+        setColor("green"); // Turns green when timer can run
         setIgnoreSpaceUp(false);
       }, 350);
       return () => {
@@ -89,9 +100,15 @@ const Timer = ({ onTimerStopped }) => {
   }, [isSpaceHeld, isRunning, ignore]);
 
   return (
-    <p className='timer' style={{ color: isSpaceHeld ? color : "" }}>
-      {isRunning ? secondsPassed.toFixed(1) : secondsPassed.toFixed(2)}
-    </p>
+    <Container fluid>
+      <Row className='justify-content-center'>
+        <Col className='col-auto'>
+          <h1 className='timer' style={{ color: isSpaceHeld ? color : "" }}>
+            {isRunning ? secondsPassed.toFixed(1) : secondsPassed.toFixed(2)}
+          </h1>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

@@ -1,7 +1,10 @@
-.headerTitle,
-.scramble,
-.timer,
-.nextButton {
-  display: flex;
-  justify-content: center;
+.themeBtn {
+  border: none;
+  background: transparent;
+  border-radius: 100%;
+}
+
+.dark {
+  background-color: #2d2d2d;
+  color: #f6f6f6;
 }

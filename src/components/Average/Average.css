@@ -1,11 +1,14 @@
+.average {
+  cursor: pointer;
+  user-select: none;
+}
+
 .averageOfFive,
 .averageOfTwelve {
-  display: flex;
-  justify-content: center;
-  margin-top: 0px;
-  margin-bottom: 0px;
   font-size: 2vw;
   font-family: monospace;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 @media only screen and (max-width: 1000px) {
