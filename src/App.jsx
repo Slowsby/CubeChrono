@@ -11,11 +11,13 @@ const App = () => {
   const [solveScramble, setSolveScramble] = useState("");
   const [solveHistory, setSolveHistory] = useState([]);
   const [darkTheme, setDarkTheme] = useState(false);
+  const [solveTimeOnLoad, setSolveTimeOnLoad] = useState(0);
 
   // Load data from localStorage
   useEffect(() => {
     const storedHistory = localStorage.getItem("solveHistory");
     const storedTheme = localStorage.getItem("darkTheme");
+    const storedSolveTimeOnLoad = localStorage.getItem("lastSolveTime");
 
     if (storedHistory) {
       setSolveHistory(JSON.parse(storedHistory));
@@ -23,6 +25,9 @@ const App = () => {
 
     if (storedTheme) {
       setDarkTheme(JSON.parse(storedTheme));
+    }
+    if (storedSolveTimeOnLoad) {
+      setSolveTimeOnLoad(JSON.parse(storedSolveTimeOnLoad));
     }
   }, []);
 
@@ -44,6 +49,7 @@ const App = () => {
       addToHistory(Number(solveTime), solveScramble);
       setSolveTime(0);
       setSolveScramble("");
+      localStorage.setItem("lastSolveTime", JSON.stringify(solveTime));
     }
   }, [solveTime, solveScramble]);
 
@@ -64,8 +70,11 @@ const App = () => {
         changeTheme={() => setDarkTheme((prev) => !prev)}
         darkTheme={darkTheme}
       />
-      <Timer onTimerStopped={handleTimerStopped} />
-      <Average solveHistory={solveHistory} />
+      <Timer
+        onTimerStopped={handleTimerStopped}
+        solveTimeOnLoad={solveTimeOnLoad}
+      />
+      <Average solveHistory={solveHistory} darkTheme={darkTheme} />
     </>
   );
 };

@@ -4,7 +4,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "./Timer.css";
 
-const Timer = ({ onTimerStopped }) => {
+const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
   const [startTime, setStartTime] = useState(null);
   const [now, setNow] = useState(null);
   const intervalRef = useRef(null);
@@ -99,12 +99,22 @@ const Timer = ({ onTimerStopped }) => {
     }
   }, [isSpaceHeld, isRunning, ignore]);
 
+  // render the time saved in localStorage if timer has never run
+  const renderTime = () => {
+    if (!isRunning && !startTime && solveTimeOnLoad) {
+      return solveTimeOnLoad;
+    } else if (!isRunning) {
+      return secondsPassed.toFixed(2);
+    } else if (isRunning) {
+      return secondsPassed.toFixed(1);
+    }
+  };
   return (
     <Container fluid>
       <Row className='justify-content-center'>
         <Col className='col-auto'>
           <h1 className='timer' style={{ color: isSpaceHeld ? color : "" }}>
-            {isRunning ? secondsPassed.toFixed(1) : secondsPassed.toFixed(2)}
+            {renderTime()}
           </h1>
         </Col>
       </Row>
