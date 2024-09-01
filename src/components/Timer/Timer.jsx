@@ -61,14 +61,19 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
     }
   };
 
-  // If a startTime exists and the timer stopped running, it exports the current time
-  useEffect(() => {
-    if (!isRunning && startTime) {
-      const solvingTime = ((now - startTime) / 1000).toFixed(2);
-      onTimerStopped(solvingTime);
+  const preventSpaceDefault = (e) => {
+    if (e.code === "Space") {
+      e.preventDefault();
     }
-  }, [isRunning]);
-
+  };
+  useEffect(() => {
+    window.addEventListener("keyup", preventSpaceDefault);
+    window.addEventListener("keydown", preventSpaceDefault);
+    return () => {
+      window.removeEventListener("keyup", preventSpaceDefault);
+      window.addEventListener("keydown", preventSpaceDefault);
+    };
+  });
   useEffect(() => {
     window.addEventListener("keydown", spaceDown);
     window.addEventListener("keyup", spaceUp);
@@ -98,6 +103,14 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
       setColor("red");
     }
   }, [isSpaceHeld, isRunning, ignore]);
+
+  // If a startTime exists and the timer stopped running, it exports the current time
+  useEffect(() => {
+    if (!isRunning && startTime) {
+      const solvingTime = ((now - startTime) / 1000).toFixed(2);
+      onTimerStopped(solvingTime);
+    }
+  }, [isRunning]);
 
   // render the time saved in localStorage if timer has never run
   const renderTime = () => {

@@ -4,7 +4,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import Button from "react-bootstrap/Button";
 import "./Average.css";
 const Average = ({ solveHistory, darkTheme }) => {
   const [averageOfFive, setAverageOfFive] = useState(null);
@@ -14,23 +13,39 @@ const Average = ({ solveHistory, darkTheme }) => {
       if (solveHistory.length >= 5) {
         const lastFiveSolves = solveHistory.slice(-5).reverse();
         const sortedArray = lastFiveSolves.sort((a, b) => a.time - b.time);
-        // The average solve is only counted excluding slowest and fastest time
-        // After sorting array, exclude the slowest and fastest time
-        const middleThree = sortedArray.slice(1, -1);
-        const average = (
-          middleThree.reduce((acc, el) => acc + el.time, 0) / 3
-        ).toFixed(2);
-        setAverageOfFive(average);
+        const dnfNumber = lastFiveSolves.filter((el) => el.dnf === true);
+        console.log(dnfNumber);
+        if (dnfNumber.length >= 2) {
+          setAverageOfFive("DNF");
+        } else {
+          // The average solve is only counted excluding slowest and fastest time
+          // After sorting array, exclude the slowest and fastest time
+          const middleThree = sortedArray.slice(1, -1);
+          const average = (
+            middleThree.reduce((acc, el) => acc + el.time, 0) / 3
+          ).toFixed(2);
+          setAverageOfFive(average);
+        }
+      } else {
+        setAverageOfFive("--");
       }
       if (solveHistory.length >= 12) {
         // Same as above.
         const lastTwelveSolves = solveHistory.slice(-12).reverse();
         const sortedArray = lastTwelveSolves.sort((a, b) => a.time - b.time);
-        const middleTen = sortedArray.slice(1, -1);
-        const average = (
-          middleTen.reduce((acc, el) => acc + el.time, 0) / 10
-        ).toFixed(2);
-        setAverageOfTwelve(average);
+        const dnfNumber = lastTwelveSolves.filter((el) => el.dnf === true);
+        console.log(dnfNumber);
+        if (dnfNumber.length >= 2) {
+          setAverageOfTwelve("DNF");
+        } else {
+          const middleTen = sortedArray.slice(1, -1);
+          const average = (
+            middleTen.reduce((acc, el) => acc + el.time, 0) / 10
+          ).toFixed(2);
+          setAverageOfTwelve(average);
+        }
+      } else {
+        setAverageOfTwelve("--");
       }
     };
     calculateAvg();
@@ -53,8 +68,15 @@ const Average = ({ solveHistory, darkTheme }) => {
         <b>
           {/*If the current index is one of the two indices we searched, indicate in the history it is not counted by putting in in parentheses*/}
           {index === lowestTimeIndex || index === highestTimeIndex
-            ? `(${el.time})`
-            : el.time}
+            ? `(${el.dnf ? `DNF(${el.time.toFixed(2)})` : `${el.time.toFixed(2)}`})`
+            : el.dnf
+              ? `DNF`
+              : el.time.toFixed(2)}
+          {el.penalty ? (
+            <span className='penaltyAverage'>{el.dnf ? "" : `+2`}</span>
+          ) : (
+            ""
+          )}
         </b>
         , {el.scramble}
       </p>
@@ -62,7 +84,11 @@ const Average = ({ solveHistory, darkTheme }) => {
   };
 
   const ao5Popover = (
-    <Popover id='popover-basic'>
+    <Popover
+      id='popover-basic'
+      onTouchEnd={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+    >
       <Popover.Header className='avgPopoverHeader'>
         Average of 5: <b>{averageOfFive}</b>
         {/* <Button className='copyBtn' variant='outline-success'>
@@ -78,12 +104,16 @@ const Average = ({ solveHistory, darkTheme }) => {
   );
 
   const ao12Popover = (
-    <Popover id='popover-basic'>
+    <Popover
+      id='popover-basic'
+      onTouchEnd={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+    >
       <Popover.Header className='avgPopoverHeader'>
         Average of 12: <b>{averageOfTwelve}</b>
-        <Button className='copyBtn' variant='outline-success'>
+        {/*<Button className='copyBtn' variant='outline-success'>
           Copy
-        </Button>
+        </Button>*/}
       </Popover.Header>
       <Popover.Body
         className={darkTheme ? "avgPopoverBodyDark" : "avgPopoverHeader"}
@@ -92,17 +122,6 @@ const Average = ({ solveHistory, darkTheme }) => {
       </Popover.Body>
     </Popover>
   );
-  const spaceDown = (e) => {
-    if (e.key === "Space") {
-      e.preventDefault();
-    }
-  };
-  useEffect(() => {
-    window.addEventListener("keydown", spaceDown);
-    return () => {
-      window.removeEventListener("keydown", spaceDown);
-    };
-  });
   return (
     <Container fluid>
       <Row className='justify-content-center'>

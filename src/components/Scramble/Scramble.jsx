@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { randomScrambleForEvent } from "cubing/scramble";
+import { setSearchDebug } from "cubing/search";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import "./Scramble.css";
 
 const Scramble = ({
   toScramble,
@@ -13,10 +15,14 @@ const Scramble = ({
 }) => {
   const [scramble, setScramble] = useState("");
   const [lastScramble, setLastScramble] = useState("");
+  const [scrambleChoice, setScrambleChoice] = useState("333");
+  setSearchDebug({
+    logPerf: false,
+  });
 
   const generateScramble = async () => {
     setLastScramble(scramble);
-    const toGenerate = await randomScrambleForEvent("333");
+    const toGenerate = await randomScrambleForEvent(scrambleChoice);
     setScramble(toGenerate.toString());
     onScrambleGenerated(toGenerate.toString());
   };
@@ -27,7 +33,7 @@ const Scramble = ({
 
   useEffect(() => {
     generateScramble();
-  }, [toScramble]);
+  }, [toScramble, scrambleChoice]);
 
   const themeIcon = (darkTheme) => {
     if (darkTheme) {
@@ -71,13 +77,19 @@ const Scramble = ({
     }
   };
 
+  const handleScrambleChoice = (event) => {
+    setScrambleChoice(event.target.value);
+  };
   useEffect(() => {
     themeIcon(darkTheme);
   }, [darkTheme]);
   return (
     <Container className='scrambleContainer' fluid>
       <Row>
-        <Col>
+        <Col
+          onTouchEnd={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+        >
           <Button
             variant='link'
             onClick={() => {
@@ -96,11 +108,35 @@ const Scramble = ({
             Next
           </Button>
         </Col>
+        <Col className='text-center'>
+          <form
+            className='scrambleChoiceForm'
+            onTouchEnd={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
+            <select
+              value={scrambleChoice}
+              onChange={handleScrambleChoice}
+              className={darkTheme ? "scrambleChoiceDark" : "scrambleChoice"}
+            >
+              <option value='222'>2x2</option>
+              <option value='333' selected>
+                3x3
+              </option>
+              <option value='444'>4x4</option>
+              <option value='555'>5x5</option>
+              <option value='666'>6x6</option>
+              <option value='777'>7x7</option>
+            </select>
+          </form>
+        </Col>
         <Col className='text-end'>
           <Button
             variant={darkTheme ? "secondary" : "light"}
             className='themeBtn'
             onClick={changeTheme}
+            onTouchEnd={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
           >
             {themeIcon(darkTheme)}
           </Button>
@@ -108,9 +144,7 @@ const Scramble = ({
       </Row>
       <Row className='justify-content-center'>
         <Col className='col-auto'>
-          <h1 style={{ whiteSpace: "pre-wrap", wordSpacing: "50%" }}>
-            {scramble}
-          </h1>
+          <h1 className='scramble'>{scramble}</h1>
         </Col>
       </Row>
       <hr />

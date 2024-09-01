@@ -1,0 +1,106 @@
+.colHistory {
+  width: 40vh;
+  height: 50vh;
+  overflow: scroll;
+  background-color: #e6e6e6;
+  margin-top: 10vh;
+  border-radius: 15px 15px 15px 15px;
+  text-align: center;
+}
+.colHistoryDark {
+  width: 40vh;
+  height: 50vh;
+  overflow: scroll;
+  background-color: #302e2c;
+  margin-top: 10vh;
+  border-radius: 15px 15px 15px 15px;
+  text-align: center;
+}
+.mainDivHistory {
+  font-size: 1.2em;
+  padding: 2px;
+}
+.divHistory {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.penaltyHistory {
+  font-size: 0.8em;
+}
+.modalHeader {
+  background-color: #d6dbe1;
+  color: black;
+}
+.modalBody {
+  text-align: center;
+  color: black;
+  background-color: #e3e8ee;
+}
+input {
+  border-radius: 10px;
+  border: none;
+}
+.inputTime {
+  width: 25%;
+  text-align: center;
+}
+.inputScramble {
+  width: 100%;
+  text-align: center;
+}
+.timeIndex {
+  text-align: left;
+}
+.time {
+  cursor: pointer;
+}
+.plusTwoBtn {
+  text-decoration: none;
+  color: #7c7c7c;
+  text-align: right;
+  cursor: pointer;
+}
+.dnfBtn {
+  text-decoration: none;
+  color: #7c7c7c;
+  text-align: right;
+  cursor: pointer;
+}
+.deleteBtn {
+  text-decoration: none;
+  color: #7c7c7c;
+  text-align: right;
+  cursor: pointer;
+}
+
+.modalBtn {
+  word-spacing: 300%;
+  font-size: 120%;
+}
+.modalPlusTwoBtn {
+  text-decoration: none;
+  color: #05a105;
+  text-align: right;
+  cursor: pointer;
+}
+.modalDnfBtn {
+  text-decoration: none;
+  color: #0057f7;
+  text-align: right;
+  cursor: pointer;
+}
+.modalDeleteBtn {
+  text-decoration: none;
+  color: #f70000;
+  text-align: right;
+  cursor: pointer;
+}
+.timeHistoryHeader {
+  border-bottom: solid;
+  padding: 10px;
+}
+.clearHistoryBtn {
+  padding: 5px;
+  font-size: 0.8em;
+}

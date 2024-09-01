@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import Scramble from "./components/Scramble/Scramble";
 import Timer from "./components/Timer/Timer";
 import Average from "./components/Average/Average";
+import History from "./components/History/History";
 import "./App.css";
+import { Col, Container, Row } from "react-bootstrap";
 
 const App = () => {
   const [toScramble, setToScramble] = useState(false);
@@ -43,7 +45,36 @@ const App = () => {
     };
     setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
   };
-
+  const deleteFromHistory = (index) => {
+    const newHistory = [
+      ...solveHistory.slice(0, index),
+      ...solveHistory.slice(index + 1),
+    ];
+    setSolveHistory(newHistory);
+  };
+  const addTwo = (index) => {
+    if (solveHistory[index].penalty) {
+      return;
+    }
+    const newHistory = [...solveHistory];
+    newHistory[index] = {
+      ...newHistory[index],
+      time: newHistory[index].time + 2,
+      penalty: true,
+    };
+    setSolveHistory(newHistory);
+  };
+  const addDnf = (index) => {
+    const newHistory = [...solveHistory];
+    newHistory[index] = {
+      ...newHistory[index],
+      dnf: newHistory[index].dnf ? !newHistory[index].dnf : true,
+    };
+    setSolveHistory(newHistory);
+  };
+  const clearSolveHistory = () => {
+    setSolveHistory([]);
+  };
   useEffect(() => {
     if (solveTime && solveScramble) {
       addToHistory(Number(solveTime), solveScramble);
@@ -70,11 +101,30 @@ const App = () => {
         changeTheme={() => setDarkTheme((prev) => !prev)}
         darkTheme={darkTheme}
       />
-      <Timer
-        onTimerStopped={handleTimerStopped}
-        solveTimeOnLoad={solveTimeOnLoad}
-      />
-      <Average solveHistory={solveHistory} darkTheme={darkTheme} />
+      <Container fluid>
+        <Row>
+          <Col xxl={2} className='d-flex flex-column justify-content-center'>
+            <History
+              solveHistory={solveHistory}
+              darkTheme={darkTheme}
+              deleteFromHistory={deleteFromHistory}
+              addTwo={addTwo}
+              addDnf={addDnf}
+              clearSolveHistory={clearSolveHistory}
+            />
+          </Col>
+          <Col
+            xxl={10}
+            className='d-flex flex-column justify-content-center order-first order-xxl-0'
+          >
+            <Timer
+              onTimerStopped={handleTimerStopped}
+              solveTimeOnLoad={solveTimeOnLoad}
+            />
+            <Average solveHistory={solveHistory} darkTheme={darkTheme} />
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 };

@@ -16,7 +16,9 @@
 .avgPopoverBody {
   background-color: #e3e8ee;
 }
-
+.penaltyAverage {
+  font-size: 0.8em;
+}
 .copyBtn {
   padding-left: 5px;
   padding-right: 5px;
