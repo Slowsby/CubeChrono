@@ -12,6 +12,7 @@ const History = ({
   deleteFromHistory,
   addTwo,
   addDnf,
+  deletePenalty,
   clearSolveHistory,
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -28,12 +29,15 @@ const History = ({
         <div key={index} className='mainDivHistory'>
           <div className='divHistory'>
             <span className='timeIndex'>{index + 1}.</span>
-            <span className='time' onClick={() => handleShow(index)}>
+            <a
+              className={darkTheme ? "timeDark" : "time"}
+              onClick={() => handleShow(index)}
+            >
               {el.dnf ? `DNF` : el.time.toFixed(2)}
               <span className='penaltyHistory'>
                 {el.dnf ? "" : el.penalty ? `+2` : ""}
               </span>
-            </span>
+            </a>
             <div className='buttons'>
               <a className='plusTwoBtn' onClick={() => addTwo(index)}>
                 <b>+2</b>
@@ -86,6 +90,12 @@ const History = ({
             ></input>
           </p>
           <p className='modalBtn'>
+            <a
+              className='modalDeletePenaltyBtn'
+              onClick={() => deletePenalty(selectedIndex)}
+            >
+              <b>OK</b>
+            </a>{" "}
             <a
               className='modalPlusTwoBtn'
               onClick={() => addTwo(selectedIndex)}

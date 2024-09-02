@@ -54,6 +54,13 @@ input {
 }
 .time {
   cursor: pointer;
+  text-decoration: none;
+  color: black;
+}
+.timeDark {
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
 }
 .plusTwoBtn {
   text-decoration: none;
@@ -77,6 +84,11 @@ input {
 .modalBtn {
   word-spacing: 300%;
   font-size: 120%;
+}
+.modalDeletePenaltyBtn {
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
 }
 .modalPlusTwoBtn {
   text-decoration: none;

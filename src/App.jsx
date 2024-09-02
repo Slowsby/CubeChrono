@@ -68,7 +68,19 @@ const App = () => {
     const newHistory = [...solveHistory];
     newHistory[index] = {
       ...newHistory[index],
-      dnf: newHistory[index].dnf ? !newHistory[index].dnf : true,
+      dnf: true,
+    };
+    setSolveHistory(newHistory);
+  };
+  const deletePenalty = (index) => {
+    const newHistory = [...solveHistory];
+    newHistory[index] = {
+      ...newHistory[index],
+      time: newHistory[index].penalty
+        ? newHistory[index].time - 2
+        : newHistory[index].time,
+      dnf: false,
+      penalty: false,
     };
     setSolveHistory(newHistory);
   };
@@ -110,6 +122,7 @@ const App = () => {
               deleteFromHistory={deleteFromHistory}
               addTwo={addTwo}
               addDnf={addDnf}
+              deletePenalty={deletePenalty}
               clearSolveHistory={clearSolveHistory}
             />
           </Col>
