@@ -8,7 +8,7 @@ You can start the timer using "**Space**"
 
 - **Average of 5 (AO5) and Average of 12 (AO12):** Displays your average of the last 5 and 12 solves below the timer.
 - **Solve History:** Maintains a complete history of all your solves.
-- **Buttons:** Includes buttons for **+2** and **DNF** penalties, as well as a **Delete (X)** button to manage solves.
+- **Buttons:** Includes buttons for "**+2**" and "**DNF**" penalties, as well as a "**Delete (X)**" and "**Delete Penalties (OK)**" button to manage solves.
 
 ## Themes
 
