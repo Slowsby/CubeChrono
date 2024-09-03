@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
@@ -14,7 +15,6 @@ const Average = ({ solveHistory, darkTheme }) => {
         const lastFiveSolves = solveHistory.slice(-5).reverse();
         const sortedArray = lastFiveSolves.sort((a, b) => a.time - b.time);
         const dnfNumber = lastFiveSolves.filter((el) => el.dnf === true);
-        console.log(dnfNumber);
         if (dnfNumber.length >= 2) {
           setAverageOfFive("DNF");
         } else {
@@ -83,45 +83,45 @@ const Average = ({ solveHistory, darkTheme }) => {
     ));
   };
 
-  const ao5Popover = (
-    <Popover
-      id='popover-basic'
-      onTouchEnd={(e) => e.stopPropagation()}
-      onTouchStart={(e) => e.stopPropagation()}
-    >
-      <Popover.Header className='avgPopoverHeader'>
-        Average of 5: <b>{averageOfFive}</b>
-        {/* <Button className='copyBtn' variant='outline-success'>
-          Copy
-        </Button> */}
-      </Popover.Header>
-      <Popover.Body
-        className={darkTheme ? "avgPopoverBodyDark" : "avgPopoverHeader"}
-      >
-        {renderAverage(5)}
-      </Popover.Body>
-    </Popover>
-  );
+  const copyAverage = (number) => {
+    let copyText = `Average of ${number}: ${number === 5 ? averageOfFive : averageOfTwelve} \n`;
+    copyText += [...solveHistory]
+      .reverse()
+      .slice(-number)
+      .map((el, index) => {
+        return `${index + 1}. ${el.dnf ? `DNF(${el.time.toFixed(2)})` : el.penalty ? `${el.time.toFixed(2)}+2` : el.time.toFixed(2)}   ${el.scramble}\n`;
+      })
+      .join("");
+    navigator.clipboard.writeText(copyText);
+    copyText = "";
+  };
 
-  const ao12Popover = (
-    <Popover
-      id='popover-basic'
-      onTouchEnd={(e) => e.stopPropagation()}
-      onTouchStart={(e) => e.stopPropagation()}
-    >
-      <Popover.Header className='avgPopoverHeader'>
-        Average of 12: <b>{averageOfTwelve}</b>
-        {/*<Button className='copyBtn' variant='outline-success'>
-          Copy
-        </Button>*/}
-      </Popover.Header>
-      <Popover.Body
-        className={darkTheme ? "avgPopoverBodyDark" : "avgPopoverHeader"}
+  const averagePopover = (number) => {
+    return (
+      <Popover
+        id='popover-basic'
+        onTouchEnd={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
       >
-        {renderAverage(12)}
-      </Popover.Body>
-    </Popover>
-  );
+        <Popover.Header className='avgPopoverHeader'>
+          Average of {number}:{" "}
+          <b>{number === 5 ? averageOfFive : averageOfTwelve}</b>
+          <Button
+            className='copyBtn'
+            variant='outline-success'
+            onClick={() => copyAverage(number)}
+          >
+            Copy
+          </Button>
+        </Popover.Header>
+        <Popover.Body
+          className={darkTheme ? "avgPopoverBodyDark" : "avgPopoverHeader"}
+        >
+          {renderAverage(number)}
+        </Popover.Body>
+      </Popover>
+    );
+  };
   return (
     <Container fluid>
       <Row className='justify-content-center'>
@@ -131,7 +131,7 @@ const Average = ({ solveHistory, darkTheme }) => {
             trigger='click'
             key='bottom'
             placement='bottom'
-            overlay={ao5Popover}
+            overlay={averagePopover(5)}
           >
             <p className='averageOfFive'>ao5: {averageOfFive}</p>
           </OverlayTrigger>
@@ -144,7 +144,7 @@ const Average = ({ solveHistory, darkTheme }) => {
             trigger='click'
             key='bottom'
             placement='bottom'
-            overlay={ao12Popover}
+            overlay={averagePopover(12)}
           >
             <p className='averageOfFive'>ao12: {averageOfTwelve}</p>
           </OverlayTrigger>
