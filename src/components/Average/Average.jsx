@@ -34,7 +34,6 @@ const Average = ({ solveHistory, darkTheme }) => {
         const lastTwelveSolves = solveHistory.slice(-12).reverse();
         const sortedArray = lastTwelveSolves.sort((a, b) => a.time - b.time);
         const dnfNumber = lastTwelveSolves.filter((el) => el.dnf === true);
-        console.log(dnfNumber);
         if (dnfNumber.length >= 2) {
           setAverageOfTwelve("DNF");
         } else {
