@@ -116,3 +116,8 @@ input {
   padding: 5px;
   font-size: 0.8em;
 }
+.confirmationBtn {
+  margin-top: 4px;
+  padding: 4px;
+  padding-top: 1px;
+}

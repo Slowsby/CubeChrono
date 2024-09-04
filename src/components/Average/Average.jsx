@@ -133,7 +133,7 @@ const Average = ({ solveHistory, darkTheme }) => {
             placement='bottom'
             overlay={averagePopover(5)}
           >
-            <p className='averageOfFive'>ao5: {averageOfFive}</p>
+            <a className='averageOfFive'>ao5: {averageOfFive}</a>
           </OverlayTrigger>
         </Col>
       </Row>
@@ -146,7 +146,7 @@ const Average = ({ solveHistory, darkTheme }) => {
             placement='bottom'
             overlay={averagePopover(12)}
           >
-            <p className='averageOfFive'>ao12: {averageOfTwelve}</p>
+            <a className='averageOfFive'>ao12: {averageOfTwelve}</a>
           </OverlayTrigger>
         </Col>
       </Row>
