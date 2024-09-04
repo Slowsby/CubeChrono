@@ -160,7 +160,7 @@ const History = ({
           <Collapse in={open}>
             <div id='deleteConfirmation'>
               <Button
-                variant='success'
+                variant='outline-success'
                 className='confirmationBtn'
                 onClick={() => {
                   setOpen(!open);
