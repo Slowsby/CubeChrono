@@ -105,7 +105,7 @@ const Average = ({ solveHistory, darkTheme }) => {
         <Popover.Header className='avgPopoverHeader'>
           Average of {number}:{" "}
           <b>{number === 5 ? averageOfFive : averageOfTwelve}</b>
-          <Button
+          {" "}<Button
             className='copyBtn'
             variant='outline-success'
             onClick={() => copyAverage(number)}
