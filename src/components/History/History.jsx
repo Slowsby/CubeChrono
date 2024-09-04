@@ -4,6 +4,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import Collapse from "react-bootstrap/Collapse";
 import "./History.css";
 
 const History = ({
@@ -17,7 +18,7 @@ const History = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
-
+  const [open, setOpen] = useState(false);
   const handleClose = () => setShowModal(false);
   const handleShow = (index) => {
     setSelectedIndex(index);
@@ -150,10 +151,26 @@ const History = ({
           <Button
             className='clearHistoryBtn'
             variant='outline-danger'
-            onClick={clearSolveHistory}
+            onClick={() => setOpen(!open)}
+            aria-controls='deleteConfirmation'
+            aria-expanded={open}
           >
             Clear History
           </Button>
+          <Collapse in={open}>
+            <div id='deleteConfirmation'>
+              <Button
+                variant='outline-success'
+                className='confirmationBtn'
+                onClick={() => {
+                  setOpen(!open);
+                  clearSolveHistory();
+                }}
+              >
+                Sure?
+              </Button>
+            </div>
+          </Collapse>
           {renderHistory()}
           {showModal ? renderModal() : " "}
         </Col>
