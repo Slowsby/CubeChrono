@@ -6,6 +6,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Collapse from "react-bootstrap/Collapse";
 import "./History.css";
+import Alert from "react-bootstrap/Alert";
 
 const History = ({
   solveHistory,
@@ -19,6 +20,7 @@ const History = ({
   const [showModal, setShowModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [open, setOpen] = useState(false);
+  const [show, setShow] = useState(false);
   const handleClose = () => setShowModal(false);
   const handleShow = (index) => {
     setSelectedIndex(index);
@@ -165,12 +167,19 @@ const History = ({
                 onClick={() => {
                   setOpen(!open);
                   clearSolveHistory();
+                  setShow(true);
+                  setTimeout(() => {
+                    setShow(false);
+                  }, 750);
                 }}
               >
                 Sure?
               </Button>
             </div>
           </Collapse>
+          <Alert className='confirmationAlert' show={show} variant='success'>
+            Deleted history.
+          </Alert>
           {renderHistory()}
           {showModal ? renderModal() : " "}
         </Col>

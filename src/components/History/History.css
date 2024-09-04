@@ -121,3 +121,9 @@ input {
   padding: 4px;
   padding-top: 1px;
 }
+.confirmationAlert {
+  padding: 5px;
+  background-color: #ffffff00;
+  border-color: #ffffff00;
+  color: #198754;
+}
