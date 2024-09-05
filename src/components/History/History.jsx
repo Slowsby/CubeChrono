@@ -21,6 +21,7 @@ const History = ({
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [open, setOpen] = useState(false);
   const [show, setShow] = useState(false);
+  const [historyCleared, setHistoryCleared] = useState(false);
   const handleClose = () => setShowModal(false);
   const handleShow = (index) => {
     setSelectedIndex(index);
@@ -166,11 +167,17 @@ const History = ({
                 className='confirmationBtn'
                 onClick={() => {
                   setOpen(!open);
-                  clearSolveHistory();
+                  if (solveHistory.length > 0) {
+                    clearSolveHistory();
+                    setHistoryCleared(true);
+                  }
                   setShow(true);
                   setTimeout(() => {
                     setShow(false);
                   }, 750);
+                  setTimeout(() => {
+                    setHistoryCleared(false);
+                  }, 950);
                 }}
               >
                 Sure?
@@ -178,7 +185,7 @@ const History = ({
             </div>
           </Collapse>
           <Alert className='confirmationAlert' show={show} variant='success'>
-            Deleted history.
+            {historyCleared ? "Deleted history." : "Nothing to delete."}
           </Alert>
           {renderHistory()}
           {showModal ? renderModal() : " "}

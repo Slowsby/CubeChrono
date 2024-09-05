@@ -24,4 +24,4 @@ dist-ssr
 *.sln
 *.sw?
 *.txt
-*.json
+testArray.json
