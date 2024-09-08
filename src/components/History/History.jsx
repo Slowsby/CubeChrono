@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
-import Collapse from "react-bootstrap/Collapse";
-import "./History.css";
-import Alert from "react-bootstrap/Alert";
+import React, { useState, useEffect } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import Collapse from 'react-bootstrap/Collapse';
+import './History.css';
+import Alert from 'react-bootstrap/Alert';
 
 const History = ({
   solveHistory,
@@ -32,23 +32,25 @@ const History = ({
       .map((el, index) => (
         <div key={index} className='mainDivHistory'>
           <div className='divHistory'>
-            <span className='timeIndex'>{index + 1}.</span>
+            <span className='timeIndex' style={{ width: '50px' }}>
+              {index + 1}.
+            </span>
             <a
-              className={darkTheme ? "timeDark" : "time"}
+              className={darkTheme ? 'timeDark' : 'time'}
               onClick={() => handleShow(index)}
             >
               {el.dnf ? `DNF` : el.time.toFixed(2)}
               <span className='penaltyHistory'>
-                {el.dnf ? "" : el.penalty ? `+2` : ""}
+                {el.dnf ? '' : el.penalty ? `+2` : ''}
               </span>
             </a>
             <div className='buttons'>
               <a className='plusTwoBtn' onClick={() => addTwo(index)}>
                 <b>+2</b>
-              </a>{" "}
+              </a>{' '}
               <a className='dnfBtn' onClick={() => addDnf(index)}>
                 <b>DNF</b>
-              </a>{" "}
+              </a>{' '}
               <a className='deleteBtn' onClick={() => deleteFromHistory(index)}>
                 <b>X</b>
               </a>
@@ -99,16 +101,16 @@ const History = ({
               onClick={() => deletePenalty(selectedIndex)}
             >
               <b>OK</b>
-            </a>{" "}
+            </a>{' '}
             <a
               className='modalPlusTwoBtn'
               onClick={() => addTwo(selectedIndex)}
             >
               <b>+2</b>
-            </a>{" "}
+            </a>{' '}
             <a className='modalDnfBtn' onClick={() => addDnf(selectedIndex)}>
               <b>DNF</b>
-            </a>{" "}
+            </a>{' '}
             <a
               className='modalDeleteBtn'
               onClick={() => {
@@ -125,18 +127,18 @@ const History = ({
   };
 
   const preventSpaceDefault = (e) => {
-    if (e.code === "Space") {
+    if (e.code === 'Space') {
       e.preventDefault();
     }
   };
 
   useEffect(() => {
-    window.addEventListener("keyup", preventSpaceDefault);
-    window.addEventListener("keydown", preventSpaceDefault);
+    window.addEventListener('keyup', preventSpaceDefault);
+    window.addEventListener('keydown', preventSpaceDefault);
 
     return () => {
-      window.removeEventListener("keyup", preventSpaceDefault);
-      window.removeEventListener("keydown", preventSpaceDefault);
+      window.removeEventListener('keyup', preventSpaceDefault);
+      window.removeEventListener('keydown', preventSpaceDefault);
     };
   }, []);
 
@@ -145,7 +147,7 @@ const History = ({
       <Row className='justify-content-center'>
         <Col
           className={
-            darkTheme ? "col-auto colHistoryDark" : "col-auto colHistory"
+            darkTheme ? 'col-auto colHistoryDark' : 'col-auto colHistory'
           }
           onTouchEnd={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
@@ -185,10 +187,10 @@ const History = ({
             </div>
           </Collapse>
           <Alert className='confirmationAlert' show={show} variant='success'>
-            {historyCleared ? "Deleted history." : "Nothing to delete."}
+            {historyCleared ? 'Deleted history.' : 'Nothing to delete.'}
           </Alert>
           {renderHistory()}
-          {showModal ? renderModal() : " "}
+          {showModal ? renderModal() : ' '}
         </Col>
       </Row>
     </Container>

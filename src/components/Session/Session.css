@@ -1,0 +1,58 @@
+.sessionCol {
+  width: 40vh;
+  height: 50vh;
+  overflow: scroll;
+  background-color: #e6e6e6;
+  margin-top: 10vh;
+  border-radius: 15px 15px 15px 15px;
+  text-align: center;
+}
+.sessionColDark {
+  width: 40vh;
+  height: 50vh;
+  overflow: scroll;
+  background-color: #302e2c;
+  margin-top: 10vh;
+  border-radius: 15px 15px 15px 15px;
+  text-align: center;
+}
+.sessionHeader {
+  border-bottom: solid;
+  padding: 10px;
+}
+.sessionBandWTime {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+hr {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.sessionTime {
+  font-size: 1.5em;
+}
+#placeholder {
+  margin-top: 5px;
+  background-color: #cecece;
+  color: #cecece;
+  border-radius: 15px;
+  margin-bottom: 11px;
+}
+#placeholderDark {
+  margin-top: 5px;
+  background-color: #2c2928;
+  color: #2c2928;
+  border-radius: 15px;
+  margin-bottom: 11px;
+}
+.sessionAvgTitle {
+  text-decoration: underline;
+  font-size: 1.1em;
+}
+.sessionAvgTime {
+  font-size: 1.2em;
+  font-weight: 500;
+}
+.avgSession {
+  line-height: 20px;
+}

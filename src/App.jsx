@@ -1,25 +1,26 @@
-import React, { useEffect, useState } from "react";
-import Scramble from "./components/Scramble/Scramble";
-import Timer from "./components/Timer/Timer";
-import Average from "./components/Average/Average";
-import History from "./components/History/History";
-import "./App.css";
-import { Col, Container, Row } from "react-bootstrap";
+import React, { useEffect, useState } from 'react';
+import Scramble from './components/Scramble/Scramble';
+import Timer from './components/Timer/Timer';
+import Average from './components/Average/Average';
+import History from './components/History/History';
+import Session from './components/Session/Session';
+import './App.css';
+import { Col, Container, Row } from 'react-bootstrap';
 
 const App = () => {
   const [toScramble, setToScramble] = useState(false);
   // On Timer stopped, saves Time, Scramble and adds it as an object in the solveHistory array with addToHistory().
   const [solveTime, setSolveTime] = useState(0);
-  const [solveScramble, setSolveScramble] = useState("");
+  const [solveScramble, setSolveScramble] = useState('');
   const [solveHistory, setSolveHistory] = useState([]);
   const [darkTheme, setDarkTheme] = useState(false);
   const [solveTimeOnLoad, setSolveTimeOnLoad] = useState(0);
 
   // Load data from localStorage
   useEffect(() => {
-    const storedHistory = localStorage.getItem("solveHistory");
-    const storedTheme = localStorage.getItem("darkTheme");
-    const storedSolveTimeOnLoad = localStorage.getItem("lastSolveTime");
+    const storedHistory = localStorage.getItem('solveHistory');
+    const storedTheme = localStorage.getItem('darkTheme');
+    const storedSolveTimeOnLoad = localStorage.getItem('lastSolveTime');
 
     if (storedHistory) {
       setSolveHistory(JSON.parse(storedHistory));
@@ -91,18 +92,18 @@ const App = () => {
     if (solveTime && solveScramble) {
       addToHistory(Number(solveTime), solveScramble);
       setSolveTime(0);
-      setSolveScramble("");
-      localStorage.setItem("lastSolveTime", JSON.stringify(solveTime));
+      setSolveScramble('');
+      localStorage.setItem('lastSolveTime', JSON.stringify(solveTime));
     }
   }, [solveTime, solveScramble]);
 
   // Register data to localStorage && changes theme
   useEffect(() => {
-    localStorage.setItem("solveHistory", JSON.stringify(solveHistory));
+    localStorage.setItem('solveHistory', JSON.stringify(solveHistory));
   }, [solveHistory]);
   useEffect(() => {
-    document.body.className = darkTheme ? "dark" : "";
-    localStorage.setItem("darkTheme", JSON.stringify(darkTheme));
+    document.body.className = darkTheme ? 'dark' : '';
+    localStorage.setItem('darkTheme', JSON.stringify(darkTheme));
   }, [darkTheme]);
 
   return (
@@ -127,7 +128,7 @@ const App = () => {
             />
           </Col>
           <Col
-            xxl={10}
+            xxl={8}
             className='d-flex flex-column justify-content-center order-first order-xxl-0'
           >
             <Timer
@@ -135,6 +136,9 @@ const App = () => {
               solveTimeOnLoad={solveTimeOnLoad}
             />
             <Average solveHistory={solveHistory} darkTheme={darkTheme} />
+          </Col>
+          <Col xxl={2} className='d-flex flex-column justify-content-center'>
+            <Session darkTheme={darkTheme} solveHistory={solveHistory} />
           </Col>
         </Row>
       </Container>
