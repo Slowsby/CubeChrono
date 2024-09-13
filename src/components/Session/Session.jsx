@@ -29,18 +29,21 @@ const Session = ({ darkTheme, solveHistory }) => {
   const [meanTotal, setMeanTotal] = useState(null);
 
   useEffect(() => {
-    const calculateAvg = (n, total) => {
+    const calculateAvg = (n) => {
       const sort = [...solveHistory]
         // Filter out DNF'd times
         .filter((el) => !el.dnf)
         .sort((a, b) => a.time - b.time);
       setBestTime(sort[0]?.time);
       setWorstTime(sort[sort.length - 1]?.time);
-      if (n === 3 || total) {
+      // Calculate Mean of 3
+      if (n === 3) {
+        // Check if the length is the correct number, else return null
         if (solveHistory.length >= n) {
           const lastNSolves = solveHistory.slice(-n).reverse();
           const dnfNumber = lastNSolves.filter((el) => el.dnf === true);
-          if (dnfNumber.length >= 2) {
+          // If one time is "DNF", return "DNF"
+          if (dnfNumber.length >= 1) {
             return 'DNF';
           } else {
             const average = (
@@ -52,10 +55,12 @@ const Session = ({ darkTheme, solveHistory }) => {
           return null;
         }
       }
+      // Calculate all AVG in the Session component
       if (solveHistory.length >= n) {
         const lastNSolves = solveHistory.slice(-n).reverse();
         const sortedArray = lastNSolves.sort((a, b) => a.time - b.time);
         const dnfNumber = lastNSolves.filter((el) => el.dnf === true);
+        // If two time are "DNF", return "DNF"
         if (dnfNumber.length >= 2) {
           return 'DNF';
         } else {
@@ -70,7 +75,16 @@ const Session = ({ darkTheme, solveHistory }) => {
         return null;
       }
     };
-    setMeanTotal(calculateAvg(solveHistory.length, true));
+    // Calculate total session mean time, if any time is DNF, just exclude it.
+    const calculateTotalMean = () => {
+      const filteredArray = [...solveHistory].filter((el) => !el.dnf);
+      const mean =
+        filteredArray.reduce((acc, el) => acc + el.time, 0) /
+        filteredArray.length;
+      return mean;
+    };
+
+    setMeanTotal(calculateTotalMean());
     setMeanOfThree(calculateAvg(3));
     setAverageOfFive(calculateAvg(5));
     setAverageOfTwelve(calculateAvg(12));
@@ -106,6 +120,7 @@ const Session = ({ darkTheme, solveHistory }) => {
         const trimmedWindow = window.slice(1, -1);
         const average =
           trimmedWindow.reduce((acc, el) => acc + el.time, 0) / (n - 2);
+        // If the calcuated average is smaller than the last, replace it.
         if (average < bestAverage) {
           bestAverage = average;
         }
@@ -132,9 +147,11 @@ const Session = ({ darkTheme, solveHistory }) => {
           <h4 className='sessionHeader'>Session</h4>
           <div>
             <h5>
-              Solve {solveHistory.length}/{solveHistory.length}
+              {/*Show the total amount of valid solves / All solves */}
+              Solve {solveHistory.filter((el) => !el.dnf).length}/
+              {solveHistory.length}
             </h5>
-            <h6>Mean : {meanTotal ? meanTotal : ''}</h6>
+            <h6>Mean : {meanTotal ? meanTotal.toFixed(2) : ''}</h6>
           </div>
           <div className='sessionBandWTime d-flex justify-content-between'>
             <div>
