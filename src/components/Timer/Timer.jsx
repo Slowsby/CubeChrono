@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import "./Timer.css";
+import React, { useEffect, useState, useRef } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import './Timer.css';
 
 const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
   const [startTime, setStartTime] = useState(null);
@@ -12,7 +12,10 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
   const [isSpaceHeld, setSpaceHeld] = useState(false);
   const [ignoreSpaceUp, setIgnoreSpaceUp] = useState(false);
   const [ignore, setIgnore] = useState(false);
-  const [color, setColor] = useState("");
+  const [color, setColor] = useState('');
+  const [isInputActive, setInputActive] = useState(false);
+  const [inputContent, setInputContent] = useState('');
+  const [lastTime, setLastTime] = useState(0);
 
   const handleStart = () => {
     setStartTime(Date.now());
@@ -35,7 +38,7 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
 
   //Stops the timer on Space DOWN.
   const spaceDown = (e) => {
-    if (e.code === "Space" || e.type === "touchstart") {
+    if (e.code === 'Space' || e.type === 'touchstart') {
       setSpaceHeld(true);
       if (isRunning) {
         setRunning(false);
@@ -52,9 +55,9 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
 
   // Starts the timer on Space UP
   const spaceUp = (e) => {
-    if (e.code === "Space" || e.type === "touchend") {
+    if (e.code === 'Space' || e.type === 'touchend') {
       setSpaceHeld(false);
-      if (!isRunning && !ignoreSpaceUp) {
+      if (!isRunning && !ignoreSpaceUp && !isInputActive) {
         setRunning(true);
         handleStart();
       }
@@ -62,45 +65,45 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
   };
 
   const preventSpaceDefault = (e) => {
-    if (e.code === "Space") {
+    if (e.code === 'Space') {
       e.preventDefault();
     }
   };
   useEffect(() => {
-    window.addEventListener("keyup", preventSpaceDefault);
-    window.addEventListener("keydown", preventSpaceDefault);
+    window.addEventListener('keyup', preventSpaceDefault);
+    window.addEventListener('keydown', preventSpaceDefault);
     return () => {
-      window.removeEventListener("keyup", preventSpaceDefault);
-      window.addEventListener("keydown", preventSpaceDefault);
+      window.removeEventListener('keyup', preventSpaceDefault);
+      window.removeEventListener('keydown', preventSpaceDefault);
     };
   });
   useEffect(() => {
-    window.addEventListener("keydown", spaceDown);
-    window.addEventListener("keyup", spaceUp);
-    window.addEventListener("touchstart", spaceDown);
-    window.addEventListener("touchend", spaceUp);
+    window.addEventListener('keydown', spaceDown);
+    window.addEventListener('keyup', spaceUp);
+    window.addEventListener('touchstart', spaceDown);
+    window.addEventListener('touchend', spaceUp);
     return () => {
-      window.removeEventListener("keydown", spaceDown);
-      window.removeEventListener("keyup", spaceUp);
-      window.removeEventListener("touchstart", spaceDown);
-      window.removeEventListener("touchend", spaceUp);
+      window.removeEventListener('keydown', spaceDown);
+      window.removeEventListener('keyup', spaceUp);
+      window.removeEventListener('touchstart', spaceDown);
+      window.removeEventListener('touchend', spaceUp);
     };
   }, [ignoreSpaceUp, isRunning]);
 
   // Turns the timer red on Space DOWN
   useEffect(() => {
     if (isSpaceHeld && !isRunning && !ignore) {
-      setColor("red");
+      setColor('red');
       setIgnoreSpaceUp(true); // Ignore Space UP for 350ms to not accidentally start the timer
       const timer = setTimeout(() => {
-        setColor("green"); // Turns green when timer can run
+        setColor('green'); // Turns green when timer can run
         setIgnoreSpaceUp(false);
       }, 350);
       return () => {
         clearTimeout(timer);
       };
     } else {
-      setColor("red");
+      setColor('red');
     }
   }, [isSpaceHeld, isRunning, ignore]);
 
@@ -108,26 +111,58 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
   useEffect(() => {
     if (!isRunning && startTime) {
       const solvingTime = ((now - startTime) / 1000).toFixed(2);
+      setLastTime(solvingTime);
       onTimerStopped(solvingTime);
     }
   }, [isRunning]);
 
-  // render the time saved in localStorage if timer has never run
   const renderTime = () => {
-    if (!isRunning && !startTime && solveTimeOnLoad) {
-      return solveTimeOnLoad;
+    if (!isRunning && lastTime) {
+      return lastTime; // If a last time exists, show it first
+    } else if (!isRunning && !startTime && solveTimeOnLoad) {
+      return solveTimeOnLoad; // If not, show the one in localStorage
     } else if (!isRunning) {
-      return secondsPassed.toFixed(2);
+      return secondsPassed.toFixed(2); // If no localStorage, show the initial number
     } else if (isRunning) {
-      return secondsPassed.toFixed(1);
+      return secondsPassed.toFixed(1); // When timer is running, only show the tenths
     }
   };
   return (
     <Container fluid>
       <Row className='justify-content-center'>
         <Col className='col-auto'>
-          <h1 className='timer' style={{ color: isSpaceHeld ? color : "" }}>
-            {renderTime()}
+          <h1
+            className='timer'
+            style={{ color: isSpaceHeld ? color : '' }}
+            onClick={() => {
+              setInputContent('');
+              setInputActive(true);
+            }}
+          >
+            {/*Click on the timer activates input,  pressing Enter validates the manual input*/}
+            {isInputActive ? (
+              <input
+                autoFocus
+                type='number'
+                className='timerInput'
+                value={inputContent}
+                onChange={(e) => setInputContent(e.target.value)}
+                onKeyDown={(e) => {
+                  if (
+                    (e.code === 'Enter' || e.code === 'NumpadEnter') &&
+                    // Check agaisnt text and negative numbers
+                    Number(inputContent) > 0
+                  ) {
+                    console.log(Number(inputContent));
+                    setLastTime(Number(inputContent));
+                    onTimerStopped(Number(inputContent)); // Submit the input value
+                    setInputActive(false);
+                  }
+                }}
+              />
+            ) : (
+              renderTime()
+            )}
           </h1>
         </Col>
       </Row>

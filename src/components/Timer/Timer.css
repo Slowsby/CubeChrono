@@ -4,7 +4,6 @@
   user-select: none;
   margin-bottom: 5%;
 }
-
 @media only screen and (max-width: 1000px) {
   .timer {
     font-size: 16vw;
@@ -15,4 +14,15 @@
   .timer {
     font-size: 25vw;
   }
+}
+
+.timerInput::-webkit-outer-spin-button,
+.timerInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.timerInput {
+  -moz-appearance: textfield;
+  width: 28vw;
+  max-width: fit-content;
 }
