@@ -172,6 +172,7 @@ const History = ({
                   if (solveHistory.length > 0) {
                     clearSolveHistory();
                     setHistoryCleared(true);
+                    localStorage.removeItem("lastSolveTime")
                   }
                   setShow(true);
                   setTimeout(() => {
