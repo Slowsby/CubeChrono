@@ -16,6 +16,13 @@
   border-radius: 15px 15px 15px 15px;
   text-align: center;
 }
+.colHistory::-webkit-scrollbar, .colHistoryDark::-webkit-scrollbar {
+  display: none;
+}
+.colHistory, .colHistoryDark {
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+}
 .mainDivHistory {
   font-size: 1.2em;
   padding: 2px;
