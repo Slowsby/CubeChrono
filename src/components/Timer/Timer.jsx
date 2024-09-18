@@ -4,7 +4,12 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './Timer.css';
 
-const Timer = ({ onTimerStopped, solveTimeOnLoad, darkTheme }) => {
+const Timer = ({
+  onTimerStopped,
+  solveTimeOnLoad,
+  darkTheme,
+  solveHistory
+}) => {
   const [startTime, setStartTime] = useState(null);
   const [now, setNow] = useState(null);
   const intervalRef = useRef(null);
@@ -15,7 +20,6 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad, darkTheme }) => {
   const [color, setColor] = useState('');
   const [isInputActive, setInputActive] = useState(false);
   const [inputContent, setInputContent] = useState('');
-  const [lastTime, setLastTime] = useState(0);
 
   const handleStart = () => {
     setStartTime(Date.now());
@@ -111,14 +115,15 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad, darkTheme }) => {
   useEffect(() => {
     if (!isRunning && startTime) {
       const solvingTime = ((now - startTime) / 1000).toFixed(2);
-      setLastTime(solvingTime);
       onTimerStopped(solvingTime);
     }
   }, [isRunning]);
 
   const renderTime = () => {
-    if (!isRunning && lastTime) {
-      return lastTime; // If a last time exists, show it first
+    if (!isRunning && solveHistory.length > 0) {
+      // If a solve history exists, show the last entry.
+      // If a time is deleted in History component, it will correctly update
+      return solveHistory[solveHistory.length - 1].time;
     } else if (!isRunning && !startTime && solveTimeOnLoad) {
       return solveTimeOnLoad; // If not, show the one in localStorage
     } else if (!isRunning) {
@@ -154,7 +159,6 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad, darkTheme }) => {
                     Number(inputContent) > 0
                   ) {
                     console.log(Number(inputContent));
-                    setLastTime(Number(inputContent));
                     onTimerStopped(Number(inputContent)); // Submit the input value
                     setInputActive(false);
                   }
