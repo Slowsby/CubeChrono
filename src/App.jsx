@@ -134,6 +134,7 @@ const App = () => {
             <Timer
               onTimerStopped={handleTimerStopped}
               solveTimeOnLoad={solveTimeOnLoad}
+              darkTheme={darkTheme}
             />
             <Average solveHistory={solveHistory} darkTheme={darkTheme} />
           </Col>

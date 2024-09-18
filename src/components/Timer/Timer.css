@@ -25,4 +25,8 @@
   -moz-appearance: textfield;
   width: 28vw;
   max-width: fit-content;
+  background-color: #e6e6e6;
+}
+.dark.timerInput {
+  background-color: #302e2c;
 }

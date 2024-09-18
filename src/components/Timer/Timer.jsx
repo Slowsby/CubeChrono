@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './Timer.css';
 
-const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
+const Timer = ({ onTimerStopped, solveTimeOnLoad, darkTheme }) => {
   const [startTime, setStartTime] = useState(null);
   const [now, setNow] = useState(null);
   const intervalRef = useRef(null);
@@ -144,7 +144,7 @@ const Timer = ({ onTimerStopped, solveTimeOnLoad }) => {
               <input
                 autoFocus
                 type='number'
-                className='timerInput'
+                className={`${darkTheme ? 'dark' : ''} timerInput`}
                 value={inputContent}
                 onChange={(e) => setInputContent(e.target.value)}
                 onKeyDown={(e) => {
