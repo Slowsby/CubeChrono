@@ -125,7 +125,7 @@ const Timer = ({
       // If a time is deleted in History component, it will correctly update
       return solveHistory[solveHistory.length - 1].time.toFixed(2);
     } else if (!isRunning && !startTime && solveTimeOnLoad) {
-      return solveTimeOnLoad.toFixed(2); // If not, show the one in localStorage
+      return solveTimeOnLoad; // If not, show the one in localStorage
     } else if (!isRunning) {
       return secondsPassed.toFixed(2); // If no localStorage, show the initial number
     } else if (isRunning) {
