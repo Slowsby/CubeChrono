@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { randomScrambleForEvent } from "cubing/scramble";
-import { setSearchDebug } from "cubing/search";
-import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import "./Scramble.css";
+import React, { useEffect, useState } from 'react';
+import { randomScrambleForEvent } from 'cubing/scramble';
+import { setSearchDebug } from 'cubing/search';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import './Scramble.css';
 
 const Scramble = ({
   toScramble,
   onScrambleGenerated,
   changeTheme,
-  darkTheme,
+  darkTheme
 }) => {
-  const [scramble, setScramble] = useState("");
-  const [lastScramble, setLastScramble] = useState("");
-  const [scrambleChoice, setScrambleChoice] = useState("333");
-  setSearchDebug({
-    logPerf: false,
-  });
+  const [scramble, setScramble] = useState('');
+  const [lastScramble, setLastScramble] = useState('');
+  const [scrambleChoice, setScrambleChoice] = useState('333');
 
   const generateScramble = async () => {
     setLastScramble(scramble);
@@ -28,11 +25,18 @@ const Scramble = ({
   };
 
   useEffect(() => {
-    generateScramble();
+    setSearchDebug({
+      logPerf: true
+    });
+    const storedScrambleChoice = localStorage.getItem('scrambleChoice');
+    if (storedScrambleChoice) {
+      setScrambleChoice(storedScrambleChoice);
+    }
   }, []);
 
   useEffect(() => {
     generateScramble();
+    localStorage.setItem('scrambleChoice', scrambleChoice);
   }, [toScramble, scrambleChoice]);
 
   const themeIcon = (darkTheme) => {
@@ -96,7 +100,7 @@ const Scramble = ({
               if (lastScramble) {
                 setScramble(lastScramble);
                 onScrambleGenerated(lastScramble);
-                setLastScramble("");
+                setLastScramble('');
               }
             }}
             disabled={!lastScramble}
@@ -117,12 +121,11 @@ const Scramble = ({
             <select
               value={scrambleChoice}
               onChange={handleScrambleChoice}
-              className={darkTheme ? "scrambleChoiceDark" : "scrambleChoice"}
+              className={darkTheme ? 'scrambleChoiceDark' : 'scrambleChoice'}
+              defaultValue={scrambleChoice}
             >
               <option value='222'>2x2</option>
-              <option value='333' selected>
-                3x3
-              </option>
+              <option value='333'>3x3</option>
               <option value='444'>4x4</option>
               <option value='555'>5x5</option>
               <option value='666'>6x6</option>
@@ -132,7 +135,7 @@ const Scramble = ({
         </Col>
         <Col className='text-end'>
           <Button
-            variant={darkTheme ? "secondary" : "light"}
+            variant={darkTheme ? 'secondary' : 'light'}
             className='themeBtn'
             onClick={changeTheme}
             onTouchEnd={(e) => e.stopPropagation()}

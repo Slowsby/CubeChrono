@@ -42,14 +42,14 @@ const App = () => {
   const addToHistory = (solveTime, solveScramble) => {
     const newSolve = {
       time: solveTime,
-      scramble: solveScramble,
+      scramble: solveScramble
     };
     setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
   };
   const deleteFromHistory = (index) => {
     const newHistory = [
       ...solveHistory.slice(0, index),
-      ...solveHistory.slice(index + 1),
+      ...solveHistory.slice(index + 1)
     ];
     setSolveHistory(newHistory);
   };
@@ -61,7 +61,7 @@ const App = () => {
     newHistory[index] = {
       ...newHistory[index],
       time: newHistory[index].time + 2,
-      penalty: true,
+      penalty: true
     };
     setSolveHistory(newHistory);
   };
@@ -69,7 +69,7 @@ const App = () => {
     const newHistory = [...solveHistory];
     newHistory[index] = {
       ...newHistory[index],
-      dnf: true,
+      dnf: true
     };
     setSolveHistory(newHistory);
   };
@@ -81,7 +81,7 @@ const App = () => {
         ? newHistory[index].time - 2
         : newHistory[index].time,
       dnf: false,
-      penalty: false,
+      penalty: false
     };
     setSolveHistory(newHistory);
   };
