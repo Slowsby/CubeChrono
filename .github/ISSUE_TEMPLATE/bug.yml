@@ -1,0 +1,40 @@
+name: Bug report
+description: Report a bug or an issue
+labels: "bug"
+title: "[Bug] "
+body:
+- type: markdown
+  id: thanks
+  attributes:
+    value: "Thanks for filing a bug report, please complete the following form"
+- type: textarea
+  id: bug
+  attributes:
+    label: Explain the bug
+    description: What happened? Be as complete as possible, with steps to reproduce.
+    placeholder: "Example: Screen goes blank after deleting time history"
+  validations:
+    required: true
+- type: textarea
+  id: browser
+  attributes:
+    label: What browser were you using?
+    placeholder: "Example: Firefox"
+  validations:
+    required: true
+- type: textarea
+  id: screenshots
+  attributes:
+    label: "Screenshots (if applicable)"
+    description: "Any screenshot showing the bug"
+    placeholder: "Drag or paste an image here."
+  validations:
+    required: false
+- type: textarea
+  id: info
+  attributes:
+    label: "Additional info"
+    description: "Anything more you'd like to share?"
+  validations:
+    required: false
+
