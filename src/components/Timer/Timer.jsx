@@ -153,14 +153,14 @@ const Timer = ({
                 value={inputContent}
                 onChange={(e) => setInputContent(e.target.value)}
                 onKeyDown={(e) => {
-                  if (
-                    (e.code === 'Enter' || e.code === 'NumpadEnter') &&
-                    // Check agaisnt text and negative numbers
-                    Number(inputContent) > 0
-                  ) {
-                    console.log(Number(inputContent));
-                    onTimerStopped(Number(inputContent).toFixed(2)); // Submit the input value
-                    setInputActive(false);
+                  if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+                    if (Number(inputContent) > 0) {
+                      console.log(Number(inputContent));
+                      onTimerStopped(Number(inputContent).toFixed(2)); // Submit the input value
+                      setInputActive(false);
+                    } else {
+                      setInputActive(false);
+                    }
                   }
                 }}
               />
