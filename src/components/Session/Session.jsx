@@ -4,7 +4,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './Session.css';
 
-const Session = ({ darkTheme, solveHistory }) => {
+const Session = ({ darkTheme, solveHistory, exportSession }) => {
+  const [session, setSession] = useState(['session1']);
+  const [currentSession, setCurrentSession] = useState('session1');
   const [meanOfThree, setMeanOfThree] = useState(null);
   const [bestMeanOfThree, setBestMeanOfThree] = useState(null);
 
@@ -134,6 +136,21 @@ const Session = ({ darkTheme, solveHistory }) => {
     setBestOfFifty(calculateBestAvg(50));
     setBestOfHundred(calculateBestAvg(100));
   }, [solveHistory]);
+
+  useEffect(() => {
+    exportSession(currentSession);
+  }, [currentSession]);
+
+  const handleSessionChange = (event) => {
+    if (event.target.value === 'newSession') {
+      const newSession = 'session' + (session.length + 1);
+      setSession((prevSession) => [...prevSession, newSession]);
+      setCurrentSession(newSession);
+    } else {
+      setCurrentSession(event.target.value);
+    }
+    console.log(event.target.value);
+  };
   return (
     <Container fluid>
       <Row className='justify-content-center'>
@@ -144,7 +161,27 @@ const Session = ({ darkTheme, solveHistory }) => {
           onTouchEnd={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
         >
-          <h4 className='sessionHeader'>Session</h4>
+          <form
+            className='sessionHeader'
+            onTouchEnd={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+          >
+            <select
+              className={`${darkTheme ? 'dark' : ''} sessionSelect`}
+              value={currentSession}
+              onChange={handleSessionChange}
+              defaultValue={currentSession}
+            >
+              {session.map((el, index) => {
+                return (
+                  <option key={index} value={el}>
+                    Session {index + 1}
+                  </option>
+                );
+              })}
+              <option value='newSession'>New Session</option>
+            </select>
+          </form>
           <div>
             <h5>
               {/*Show the total amount of valid solves / All solves */}
