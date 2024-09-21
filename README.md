@@ -14,7 +14,8 @@ You can start the timer using "**Space**"
 
 ## Themes
 
-![Text-Light-DarkTheme-CubeChronoV2](https://github.com/user-attachments/assets/7b1a2d39-e27d-4cff-9280-6207683c1935)
+![Untitled-2](https://github.com/user-attachments/assets/73b382b7-61dc-4993-9299-1ca67d32cd6d)
+
 
 ## Running
 
