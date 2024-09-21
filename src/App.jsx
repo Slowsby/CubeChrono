@@ -14,13 +14,13 @@ const App = () => {
   const [solveScramble, setSolveScramble] = useState('');
   const [solveHistory, setSolveHistory] = useState([]);
   const [darkTheme, setDarkTheme] = useState(false);
-  const [solveTimeOnLoad, setSolveTimeOnLoad] = useState(0);
+  const [session, setSession] = useState('session1');
+  const [currentSessionHistory, setCurrentSessionHistory] = useState([]);
 
   // Load data from localStorage
   useEffect(() => {
     const storedHistory = localStorage.getItem('solveHistory');
     const storedTheme = localStorage.getItem('darkTheme');
-    const storedSolveTimeOnLoad = localStorage.getItem('lastSolveTime');
 
     if (storedHistory) {
       setSolveHistory(JSON.parse(storedHistory));
@@ -29,9 +29,6 @@ const App = () => {
     if (storedTheme) {
       setDarkTheme(JSON.parse(storedTheme));
     }
-    if (storedSolveTimeOnLoad) {
-      setSolveTimeOnLoad(JSON.parse(storedSolveTimeOnLoad));
-    }
   }, []);
 
   const handleTimerStopped = (solvingTime) => {
@@ -39,21 +36,27 @@ const App = () => {
     setToScramble((prev) => !prev);
   };
 
-  const addToHistory = (solveTime, solveScramble) => {
+  const addToHistory = (solveTime, solveScramble, session) => {
     const newSolve = {
       time: solveTime,
-      scramble: solveScramble
+      scramble: solveScramble,
+      session: session, // session allows to filter the array for the current session
+      date: Date.now() // sets date of the solve in ms, also used as a unique ID to manipulate the array in the children components
     };
     setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
   };
-  const deleteFromHistory = (index) => {
+
+  // Next 4 functions use date as a unique ID to identify the correct element to delete.
+  const deleteFromHistory = (date) => {
+    const index = solveHistory.findIndex((el) => el.date === date);
     const newHistory = [
       ...solveHistory.slice(0, index),
       ...solveHistory.slice(index + 1)
     ];
     setSolveHistory(newHistory);
   };
-  const addTwo = (index) => {
+  const addTwo = (date) => {
+    const index = solveHistory.findIndex((el) => el.date === date);
     if (solveHistory[index].penalty) {
       return;
     }
@@ -65,16 +68,18 @@ const App = () => {
     };
     setSolveHistory(newHistory);
   };
-  const addDnf = (index) => {
+  const addDnf = (date) => {
     const newHistory = [...solveHistory];
+    const index = newHistory.findIndex((el) => el.date === date);
     newHistory[index] = {
       ...newHistory[index],
       dnf: true
     };
     setSolveHistory(newHistory);
   };
-  const deletePenalty = (index) => {
+  const deletePenalty = (date) => {
     const newHistory = [...solveHistory];
+    const index = newHistory.findIndex((el) => el.date === date);
     newHistory[index] = {
       ...newHistory[index],
       time: newHistory[index].penalty
@@ -85,15 +90,23 @@ const App = () => {
     };
     setSolveHistory(newHistory);
   };
-  const clearSolveHistory = () => {
-    setSolveHistory([]);
+  const clearSolveHistory = (sessionName) => {
+    const updatedSolveHistory = solveHistory.filter(
+      (solve) => solve.session !== sessionName
+    );
+    setSolveHistory(updatedSolveHistory);
   };
+
+  // Set currentSession that will be used by currentSessionHistory
+  const exportSession = (currentSession) => {
+    setSession(currentSession);
+  };
+
   useEffect(() => {
     if (solveTime && solveScramble) {
-      addToHistory(Number(solveTime), solveScramble);
+      addToHistory(Number(solveTime), solveScramble, session);
       setSolveTime(0);
       setSolveScramble('');
-      localStorage.setItem('lastSolveTime', JSON.stringify(solveTime));
     }
   }, [solveTime, solveScramble]);
 
@@ -105,6 +118,12 @@ const App = () => {
     document.body.className = darkTheme ? 'dark' : '';
     localStorage.setItem('darkTheme', JSON.stringify(darkTheme));
   }, [darkTheme]);
+
+  // Filtered out array gets sent out to child components based on current session
+  useEffect(() => {
+    const sessionHistory = solveHistory.filter((el) => el.session === session);
+    setCurrentSessionHistory(sessionHistory);
+  }, [session, solveHistory]);
 
   return (
     <>
@@ -118,7 +137,7 @@ const App = () => {
         <Row>
           <Col xxl={2} className='d-flex flex-column justify-content-center'>
             <History
-              solveHistory={solveHistory}
+              solveHistory={currentSessionHistory}
               darkTheme={darkTheme}
               deleteFromHistory={deleteFromHistory}
               addTwo={addTwo}
@@ -133,14 +152,18 @@ const App = () => {
           >
             <Timer
               onTimerStopped={handleTimerStopped}
-              solveTimeOnLoad={solveTimeOnLoad}
               darkTheme={darkTheme}
-              solveHistory={solveHistory}
+              solveHistory={currentSessionHistory}
             />
             <Average solveHistory={solveHistory} darkTheme={darkTheme} />
           </Col>
           <Col xxl={2} className='d-flex flex-column justify-content-center'>
-            <Session darkTheme={darkTheme} solveHistory={solveHistory} />
+            <Session
+              darkTheme={darkTheme}
+              solveHistory={currentSessionHistory}
+              exportSession={exportSession}
+              clearSolveHistory={clearSolveHistory}
+            />
           </Col>
         </Row>
       </Container>

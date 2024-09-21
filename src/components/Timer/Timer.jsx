@@ -4,12 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './Timer.css';
 
-const Timer = ({
-  onTimerStopped,
-  solveTimeOnLoad,
-  darkTheme,
-  solveHistory
-}) => {
+const Timer = ({ onTimerStopped, darkTheme, solveHistory }) => {
   const [startTime, setStartTime] = useState(null);
   const [now, setNow] = useState(null);
   const intervalRef = useRef(null);
@@ -124,10 +119,8 @@ const Timer = ({
       // If a solve history exists, show the last entry.
       // If a time is deleted in History component, it will correctly update
       return solveHistory[solveHistory.length - 1].time.toFixed(2);
-    } else if (!isRunning && !startTime && solveTimeOnLoad) {
-      return solveTimeOnLoad; // If not, show the one in localStorage
     } else if (!isRunning) {
-      return secondsPassed.toFixed(2); // If no localStorage, show the initial number
+      return secondsPassed.toFixed(2); // show the initial number
     } else if (isRunning) {
       return secondsPassed.toFixed(1); // When timer is running, only show the tenths
     }
@@ -155,7 +148,6 @@ const Timer = ({
                 onKeyDown={(e) => {
                   if (e.code === 'Enter' || e.code === 'NumpadEnter') {
                     if (Number(inputContent) > 0) {
-                      console.log(Number(inputContent));
                       onTimerStopped(Number(inputContent).toFixed(2)); // Submit the input value
                       setInputActive(false);
                     } else {

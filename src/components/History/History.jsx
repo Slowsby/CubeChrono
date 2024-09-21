@@ -15,16 +15,18 @@ const History = ({
   addTwo,
   addDnf,
   deletePenalty,
-  clearSolveHistory,
+  clearSolveHistory
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [selectedDate, setSelectedDate] = useState('');
   const [open, setOpen] = useState(false);
   const [show, setShow] = useState(false);
   const [historyCleared, setHistoryCleared] = useState(false);
   const handleClose = () => setShowModal(false);
-  const handleShow = (index) => {
+  const handleShow = (index, date) => {
     setSelectedIndex(index);
+    setSelectedDate(date);
     setShowModal(true);
   };
   const renderHistory = () => {
@@ -37,7 +39,7 @@ const History = ({
             </span>
             <a
               className={darkTheme ? 'timeDark' : 'time'}
-              onClick={() => handleShow(index)}
+              onClick={() => handleShow(index, el.date)}
             >
               {el.dnf ? `DNF` : el.time.toFixed(2)}
               <span className='penaltyHistory'>
@@ -45,13 +47,16 @@ const History = ({
               </span>
             </a>
             <div className='buttons'>
-              <a className='plusTwoBtn' onClick={() => addTwo(index)}>
+              <a className='plusTwoBtn' onClick={() => addTwo(el.date)}>
                 <b>+2</b>
               </a>{' '}
-              <a className='dnfBtn' onClick={() => addDnf(index)}>
+              <a className='dnfBtn' onClick={() => addDnf(el.date)}>
                 <b>DNF</b>
               </a>{' '}
-              <a className='deleteBtn' onClick={() => deleteFromHistory(index)}>
+              <a
+                className='deleteBtn'
+                onClick={() => deleteFromHistory(el.date)}
+              >
                 <b>X</b>
               </a>
             </div>
@@ -72,12 +77,20 @@ const History = ({
           : solveHistory[index].time.toFixed(2);
       }
     };
+    const localDate = selectedDate
+      ? new Date(selectedDate).toLocaleString()
+      : '';
     return (
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header className='modalHeader' closeButton>
           <Modal.Title>Solve #{selectedIndex + 1}</Modal.Title>
         </Modal.Header>
         <Modal.Body className='modalBody'>
+          <p>
+            Date
+            <br />
+            <input className='inputScramble' value={localDate} readOnly></input>
+          </p>
           <p>
             Time <br />
             <input
@@ -98,24 +111,21 @@ const History = ({
           <p className='modalBtn'>
             <a
               className='modalDeletePenaltyBtn'
-              onClick={() => deletePenalty(selectedIndex)}
+              onClick={() => deletePenalty(selectedDate)}
             >
               <b>OK</b>
             </a>{' '}
-            <a
-              className='modalPlusTwoBtn'
-              onClick={() => addTwo(selectedIndex)}
-            >
+            <a className='modalPlusTwoBtn' onClick={() => addTwo(selectedDate)}>
               <b>+2</b>
             </a>{' '}
-            <a className='modalDnfBtn' onClick={() => addDnf(selectedIndex)}>
+            <a className='modalDnfBtn' onClick={() => addDnf(selectedDate)}>
               <b>DNF</b>
             </a>{' '}
             <a
               className='modalDeleteBtn'
               onClick={() => {
                 setShowModal(false);
-                deleteFromHistory(selectedIndex);
+                deleteFromHistory(selectedDate);
               }}
             >
               <b>X</b>
@@ -160,7 +170,7 @@ const History = ({
             aria-controls='deleteConfirmation'
             aria-expanded={open}
           >
-            Clear History
+            Clear Session History
           </Button>
           <Collapse in={open}>
             <div id='deleteConfirmation'>
@@ -170,9 +180,8 @@ const History = ({
                 onClick={() => {
                   setOpen(!open);
                   if (solveHistory.length > 0) {
-                    clearSolveHistory();
+                    clearSolveHistory(solveHistory[0].session);
                     setHistoryCleared(true);
-                    localStorage.removeItem("lastSolveTime")
                   }
                   setShow(true);
                   setTimeout(() => {
@@ -188,7 +197,7 @@ const History = ({
             </div>
           </Collapse>
           <Alert className='confirmationAlert' show={show} variant='success'>
-            {historyCleared ? 'Deleted history.' : 'Nothing to delete.'}
+            {historyCleared ? 'Deleted session history.' : 'Nothing to delete.'}
           </Alert>
           {renderHistory()}
           {showModal ? renderModal() : ' '}

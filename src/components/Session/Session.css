@@ -16,16 +16,34 @@
   border-radius: 15px 15px 15px 15px;
   text-align: center;
 }
-.sessionCol::-webkit-scrollbar, .sessionColDark::-webkit-scrollbar {
+.sessionCol::-webkit-scrollbar,
+.sessionColDark::-webkit-scrollbar {
   display: none;
 }
-.sessionCol, .sessionColDark {
-  -ms-overflow-style: none; 
+.sessionCol,
+.sessionColDark {
+  -ms-overflow-style: none;
   scrollbar-width: none;
 }
 .sessionHeader {
   border-bottom: solid;
   padding: 10px;
+}
+.sessionSelect {
+  border: none;
+  background-color: #cecece;
+  border-radius: 25px;
+  padding: 5px;
+  font-size: 1.2em;
+  text-align: center;
+}
+.extOpt {
+  font-size: 0.8em;
+  border: solid;
+  text-align: left;
+}
+.dark.sessionSelect {
+  background-color: #2c2928;
 }
 .sessionBandWTime {
   margin-left: 15px;

@@ -9,11 +9,13 @@ You can start the timer using "**Space**"
 - **Average of 5 (AO5) and Average of 12 (AO12):** Displays your average of the last 5 and 12 solves below the timer.
 - **Solve History:** Maintains a complete history of all your solves.
 - **Buttons:** Includes buttons for "**+2**" and "**DNF**" penalties, as well as a "**Delete (X)**" and "**Remove Penalties (OK)**" button to manage solves.
-- **Manual Input** Manually input time by clicking on the timer, then press `Enter` to validate
+- **Manual Input** Manually input time by clicking on the timer, then press `Enter` to validate.
+- **Session management** Create, edit, and rename as many sessions as you need.
 
 ## Themes
 
-![Text-Light-DarkTheme-CubeChronoV2](https://github.com/user-attachments/assets/7b1a2d39-e27d-4cff-9280-6207683c1935)
+![Untitled-2](https://github.com/user-attachments/assets/73b382b7-61dc-4993-9299-1ca67d32cd6d)
+
 
 ## Running
 
