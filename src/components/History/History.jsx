@@ -170,7 +170,7 @@ const History = ({
             aria-controls='deleteConfirmation'
             aria-expanded={open}
           >
-            Clear History
+            Clear Session History
           </Button>
           <Collapse in={open}>
             <div id='deleteConfirmation'>
@@ -180,9 +180,8 @@ const History = ({
                 onClick={() => {
                   setOpen(!open);
                   if (solveHistory.length > 0) {
-                    clearSolveHistory();
+                    clearSolveHistory(solveHistory[0].session);
                     setHistoryCleared(true);
-                    localStorage.removeItem('lastSolveTime');
                   }
                   setShow(true);
                   setTimeout(() => {
@@ -198,7 +197,7 @@ const History = ({
             </div>
           </Collapse>
           <Alert className='confirmationAlert' show={show} variant='success'>
-            {historyCleared ? 'Deleted history.' : 'Nothing to delete.'}
+            {historyCleared ? 'Deleted session history.' : 'Nothing to delete.'}
           </Alert>
           {renderHistory()}
           {showModal ? renderModal() : ' '}

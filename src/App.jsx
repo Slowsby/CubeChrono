@@ -90,8 +90,11 @@ const App = () => {
     };
     setSolveHistory(newHistory);
   };
-  const clearSolveHistory = () => {
-    setSolveHistory([]);
+  const clearSolveHistory = (sessionName) => {
+    const updatedSolveHistory = solveHistory.filter(
+      (solve) => solve.session !== sessionName
+    );
+    setSolveHistory(updatedSolveHistory);
   };
 
   // Set currentSession that will be used by currentSessionHistory
@@ -159,6 +162,7 @@ const App = () => {
               darkTheme={darkTheme}
               solveHistory={currentSessionHistory}
               exportSession={exportSession}
+              clearSolveHistory={clearSolveHistory}
             />
           </Col>
         </Row>

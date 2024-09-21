@@ -120,7 +120,7 @@ const Timer = ({ onTimerStopped, darkTheme, solveHistory }) => {
       // If a time is deleted in History component, it will correctly update
       return solveHistory[solveHistory.length - 1].time.toFixed(2);
     } else if (!isRunning) {
-      return secondsPassed.toFixed(2); // If no localStorage, show the initial number
+      return secondsPassed.toFixed(2); // show the initial number
     } else if (isRunning) {
       return secondsPassed.toFixed(1); // When timer is running, only show the tenths
     }
@@ -148,7 +148,6 @@ const Timer = ({ onTimerStopped, darkTheme, solveHistory }) => {
                 onKeyDown={(e) => {
                   if (e.code === 'Enter' || e.code === 'NumpadEnter') {
                     if (Number(inputContent) > 0) {
-                      console.log(Number(inputContent));
                       onTimerStopped(Number(inputContent).toFixed(2)); // Submit the input value
                       setInputActive(false);
                     } else {

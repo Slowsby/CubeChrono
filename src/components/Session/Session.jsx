@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './Session.css';
 
-const Session = ({ darkTheme, solveHistory, exportSession }) => {
+const Session = ({
+  darkTheme,
+  solveHistory,
+  exportSession,
+  clearSolveHistory
+}) => {
   const [session, setSession] = useState(['session1']);
   const [currentSession, setCurrentSession] = useState('session1');
+  const [sessionName, setSessionName] = useState(['Session 1']);
   const [meanOfThree, setMeanOfThree] = useState(null);
   const [bestMeanOfThree, setBestMeanOfThree] = useState(null);
 
@@ -30,6 +37,23 @@ const Session = ({ darkTheme, solveHistory, exportSession }) => {
 
   const [meanTotal, setMeanTotal] = useState(null);
 
+  useEffect(() => {
+    const storedStates = JSON.parse(localStorage.getItem('states'));
+    if (storedStates) {
+      setSession(storedStates.sessionArr);
+      setSessionName(storedStates.sessionNameArr);
+      setCurrentSession(storedStates.currentSession);
+    }
+  }, []);
+
+  useEffect(() => {
+    const states = {
+      sessionArr: session,
+      sessionNameArr: sessionName,
+      currentSession: currentSession
+    };
+    localStorage.setItem('states', JSON.stringify(states));
+  }, [session, sessionName, currentSession]);
   useEffect(() => {
     const calculateAvg = (n) => {
       const sort = [...solveHistory]
@@ -142,14 +166,68 @@ const Session = ({ darkTheme, solveHistory, exportSession }) => {
   }, [currentSession]);
 
   const handleSessionChange = (event) => {
-    if (event.target.value === 'newSession') {
-      const newSession = 'session' + (session.length + 1);
+    // If selected the "Edit Session" option
+    if (event.target.value === 'editSession') {
+      // Exctract answer to window.prompt with a 20 char limit
+      let answer = window
+        .prompt(
+          `[ ${sessionName[session.findIndex((el) => el === currentSession)]} ] \nRename or type 'delete' to delete the session\n`,
+          sessionName[session.findIndex((el) => el === currentSession)]
+        )
+        .slice(0, 20);
+      // If empty or cancelled, return.
+      if (answer === '' || answer === null) {
+        return;
+      }
+      // Delete option
+      if (answer === 'delete') {
+        if (session.length === 1) {
+          return;
+        }
+        //Find the current session index
+        const toRemove = session.findIndex((el) => el === currentSession);
+
+        const updatedSessions = [...session];
+        const updatedSessionNames = [...sessionName];
+        // Remove the current session
+        updatedSessions.splice(toRemove, 1);
+        // Remove the current session's name
+        updatedSessionNames.splice(toRemove, 1);
+
+        // Clear solveHistory from all solves with the session ID
+        clearSolveHistory(session[toRemove]);
+        // Update the session and sessionName array with the deleted session
+        setSession(updatedSessions);
+        setSessionName(updatedSessionNames);
+        // Select the first option after deleting
+        setCurrentSession(updatedSessions[0]);
+      } else {
+        // if not empty and not "delete", rename session
+        // Find index of the current session
+        const toRename = session.findIndex((el) => el === currentSession);
+        const updatedSessionNames = [...sessionName];
+        // Set the current session name with the prompt answer
+        updatedSessionNames[toRename] = answer;
+        // Update sessionName array
+        setSessionName(updatedSessionNames);
+      }
+      // If selected the "New Session" option
+    } else if (event.target.value === 'newSession') {
+      // create new session
+      // Generate a unique ID for the session ID
+      const newSession = uuidv4();
+      // Add the new session ID to the session array
       setSession((prevSession) => [...prevSession, newSession]);
+      // Add a name to the new session
+      setSessionName((prevSession) => [
+        ...prevSession,
+        `Session ` + (prevSession.length + 1)
+      ]);
+      //
       setCurrentSession(newSession);
     } else {
       setCurrentSession(event.target.value);
     }
-    console.log(event.target.value);
   };
   return (
     <Container fluid>
@@ -170,16 +248,20 @@ const Session = ({ darkTheme, solveHistory, exportSession }) => {
               className={`${darkTheme ? 'dark' : ''} sessionSelect`}
               value={currentSession}
               onChange={handleSessionChange}
-              defaultValue={currentSession}
             >
               {session.map((el, index) => {
                 return (
                   <option key={index} value={el}>
-                    Session {index + 1}
+                    {sessionName[index]}
                   </option>
                 );
               })}
-              <option value='newSession'>New Session</option>
+              <option className='extOpt' value='editSession'>
+                Edit Session
+              </option>
+              <option className='extOpt' value='newSession'>
+                New Session
+              </option>
             </select>
           </form>
           <div>
