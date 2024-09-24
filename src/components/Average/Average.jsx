@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
-import "./Average.css";
+import React, { useState, useEffect } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+import { defaultTimeFormat } from '../../utils/defaultTimeFormat';
+import './Average.css';
+
 const Average = ({ solveHistory, darkTheme }) => {
-  const [averageOfFive, setAverageOfFive] = useState(null);
-  const [averageOfTwelve, setAverageOfTwelve] = useState(null);
+  const [averageOfFive, setAverageOfFive] = useState(0);
+  const [averageOfTwelve, setAverageOfTwelve] = useState(0);
   useEffect(() => {
     const calculateAvg = () => {
       if (solveHistory.length >= 5) {
@@ -16,7 +18,7 @@ const Average = ({ solveHistory, darkTheme }) => {
         const sortedArray = lastFiveSolves.sort((a, b) => a.time - b.time);
         const dnfNumber = lastFiveSolves.filter((el) => el.dnf === true);
         if (dnfNumber.length >= 2) {
-          setAverageOfFive("DNF");
+          setAverageOfFive('DNF');
         } else {
           // The average solve is only counted excluding slowest and fastest time
           // After sorting array, exclude the slowest and fastest time
@@ -27,7 +29,7 @@ const Average = ({ solveHistory, darkTheme }) => {
           setAverageOfFive(average);
         }
       } else {
-        setAverageOfFive("--");
+        setAverageOfFive('--');
       }
       if (solveHistory.length >= 12) {
         // Same as above.
@@ -35,7 +37,7 @@ const Average = ({ solveHistory, darkTheme }) => {
         const sortedArray = lastTwelveSolves.sort((a, b) => a.time - b.time);
         const dnfNumber = lastTwelveSolves.filter((el) => el.dnf === true);
         if (dnfNumber.length >= 2) {
-          setAverageOfTwelve("DNF");
+          setAverageOfTwelve('DNF');
         } else {
           const middleTen = sortedArray.slice(1, -1);
           const average = (
@@ -44,7 +46,7 @@ const Average = ({ solveHistory, darkTheme }) => {
           setAverageOfTwelve(average);
         }
       } else {
-        setAverageOfTwelve("--");
+        setAverageOfTwelve('--');
       }
     };
     calculateAvg();
@@ -55,26 +57,26 @@ const Average = ({ solveHistory, darkTheme }) => {
     const lastSolvesArray = solveHistory.slice(-number).reverse();
     //Find the index of the location of the fastest time
     const lowestTimeIndex = lastSolvesArray.findIndex(
-      (el) => el.time === Math.min(...lastSolvesArray.map((el) => el.time)),
+      (el) => el.time === Math.min(...lastSolvesArray.map((el) => el.time))
     );
     //Find the index of the location of the slowest time
     const highestTimeIndex = lastSolvesArray.findIndex(
-      (el) => el.time === Math.max(...lastSolvesArray.map((el) => el.time)),
+      (el) => el.time === Math.max(...lastSolvesArray.map((el) => el.time))
     );
     return lastSolvesArray.map((el, index) => (
       <p key={index}>
-        {index + 1}.{" "}
+        {index + 1}.{' '}
         <b>
           {/*If the current index is one of the two indices we searched, indicate in the history it is not counted by putting in in parentheses*/}
           {index === lowestTimeIndex || index === highestTimeIndex
-            ? `(${el.dnf ? `DNF(${el.time.toFixed(2)})` : `${el.time.toFixed(2)}`})`
+            ? `(${el.dnf ? `DNF(${defaultTimeFormat(el.time)})` : `${defaultTimeFormat(el.time)}`})`
             : el.dnf
               ? `DNF`
-              : el.time.toFixed(2)}
+              : defaultTimeFormat(el.time)}
           {el.penalty ? (
-            <span className='penaltyAverage'>{el.dnf ? "" : `+2`}</span>
+            <span className='penaltyAverage'>{el.dnf ? '' : `+2`}</span>
           ) : (
-            ""
+            ''
           )}
         </b>
         , {el.scramble}
@@ -88,11 +90,11 @@ const Average = ({ solveHistory, darkTheme }) => {
       .reverse()
       .slice(-number)
       .map((el, index) => {
-        return `${index + 1}. ${el.dnf ? `DNF(${el.time.toFixed(2)})` : el.penalty ? `${el.time.toFixed(2)}+2` : el.time.toFixed(2)}   ${el.scramble}\n`;
+        return `${index + 1}. ${el.dnf ? `DNF(${defaultTimeFormat(el.time)})` : el.penalty ? `${defaultTimeFormat(el.time)}+2` : defaultTimeFormat(el.time)}   ${el.scramble}\n`;
       })
-      .join("");
+      .join('');
     navigator.clipboard.writeText(copyText);
-    copyText = "";
+    copyText = '';
   };
 
   const averagePopover = (number) => {
@@ -103,9 +105,13 @@ const Average = ({ solveHistory, darkTheme }) => {
         onTouchStart={(e) => e.stopPropagation()}
       >
         <Popover.Header className='avgPopoverHeader'>
-          Average of {number}:{" "}
-          <b>{number === 5 ? averageOfFive : averageOfTwelve}</b>
-          {" "}<Button
+          Average of {number}:{' '}
+          <b>
+            {number === 5
+              ? defaultTimeFormat(averageOfFive)
+              : defaultTimeFormat(averageOfTwelve)}
+          </b>{' '}
+          <Button
             className='copyBtn'
             variant='outline-success'
             onClick={() => copyAverage(number)}
@@ -114,7 +120,7 @@ const Average = ({ solveHistory, darkTheme }) => {
           </Button>
         </Popover.Header>
         <Popover.Body
-          className={darkTheme ? "avgPopoverBodyDark" : "avgPopoverHeader"}
+          className={darkTheme ? 'avgPopoverBodyDark' : 'avgPopoverHeader'}
         >
           {renderAverage(number)}
         </Popover.Body>
@@ -132,7 +138,9 @@ const Average = ({ solveHistory, darkTheme }) => {
             placement='bottom'
             overlay={averagePopover(5)}
           >
-            <a className='averageOfFive'>ao5: {averageOfFive}</a>
+            <a className='averageOfFive'>
+              ao5: {defaultTimeFormat(averageOfFive)}
+            </a>
           </OverlayTrigger>
         </Col>
       </Row>
@@ -145,7 +153,9 @@ const Average = ({ solveHistory, darkTheme }) => {
             placement='bottom'
             overlay={averagePopover(12)}
           >
-            <a className='averageOfFive'>ao12: {averageOfTwelve}</a>
+            <a className='averageOfFive'>
+              ao12: {defaultTimeFormat(averageOfTwelve)}
+            </a>
           </OverlayTrigger>
         </Col>
       </Row>

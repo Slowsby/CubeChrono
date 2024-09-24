@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { defaultTimeFormat } from '../../utils/defaultTimeFormat';
 import './Session.css';
 
 const Session = ({
@@ -270,7 +271,7 @@ const Session = ({
               Solve {solveHistory.filter((el) => !el.dnf).length}/
               {solveHistory.length}
             </h5>
-            <h6>Mean : {meanTotal ? meanTotal.toFixed(2) : ''}</h6>
+            <h6>Mean : {meanTotal ? defaultTimeFormat(meanTotal) : ''}</h6>
           </div>
           <div className='sessionBandWTime d-flex justify-content-between'>
             <div>
@@ -282,7 +283,7 @@ const Session = ({
                   bestTime ? '' : darkTheme ? 'placeholderDark' : 'placeholder'
                 }
               >
-                {bestTime ? bestTime.toFixed(2) : 'N/A'}
+                {bestTime ? defaultTimeFormat(bestTime) : 'N/A'}
               </p>
             </div>
             <div>
@@ -294,7 +295,7 @@ const Session = ({
                   bestTime ? '' : darkTheme ? 'placeholderDark' : 'placeholder'
                 }
               >
-                {worstTime ? worstTime.toFixed(2) : 'N/A'}
+                {worstTime ? defaultTimeFormat(worstTime) : 'N/A'}
               </p>
             </div>
           </div>
@@ -309,16 +310,22 @@ const Session = ({
               {solveHistory.length >= 3 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Mean of 3:</p>
-                  <p className='sessionAvgTime'>{meanOfThree}</p>
-                  <p className='sessionAvgTime'>{bestMeanOfThree.toFixed(2)}</p>
+                  <p className='sessionAvgTime'>
+                    {defaultTimeFormat(meanOfThree)}
+                  </p>
+                  <p className='sessionAvgTime'>
+                    {defaultTimeFormat(bestMeanOfThree)}
+                  </p>
                 </div>
               )}
               {solveHistory.length >= 5 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Avg of 5:</p>
-                  <p className='sessionAvgTime'>{averageOfFive}</p>
                   <p className='sessionAvgTime'>
-                    {bestOfFive ? bestOfFive.toFixed(2) : ''}
+                    {defaultTimeFormat(averageOfFive)}
+                  </p>
+                  <p className='sessionAvgTime'>
+                    {bestOfFive ? defaultTimeFormat(bestOfFive) : ''}
                   </p>
                 </div>
               )}
@@ -326,9 +333,11 @@ const Session = ({
               {solveHistory.length >= 12 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Avg of 12:</p>
-                  <p className='sessionAvgTime'>{averageOfTwelve}</p>
                   <p className='sessionAvgTime'>
-                    {bestOfTwelve ? bestOfTwelve.toFixed(2) : ''}
+                    {defaultTimeFormat(averageOfTwelve)}
+                  </p>
+                  <p className='sessionAvgTime'>
+                    {bestOfTwelve ? defaultTimeFormat(bestOfTwelve) : ''}
                   </p>
                 </div>
               )}
@@ -336,9 +345,13 @@ const Session = ({
               {solveHistory.length >= 25 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Avg of 25:</p>
-                  <p className='sessionAvgTime'>{averageOfTwentyFive}</p>
                   <p className='sessionAvgTime'>
-                    {bestOfTwentyFive ? bestOfTwentyFive.toFixed(2) : ''}
+                    {defaultTimeFormat(averageOfTwentyFive)}
+                  </p>
+                  <p className='sessionAvgTime'>
+                    {bestOfTwentyFive
+                      ? defaultTimeFormat(bestOfTwentyFive)
+                      : ''}
                   </p>
                 </div>
               )}
@@ -346,9 +359,11 @@ const Session = ({
               {solveHistory.length >= 50 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Avg of 50:</p>
-                  <p className='sessionAvgTime'>{averageOfFifty}</p>
                   <p className='sessionAvgTime'>
-                    {bestOfFifty ? bestOfFifty.toFixed(2) : ''}
+                    {defaultTimeFormat(averageOfFifty)}
+                  </p>
+                  <p className='sessionAvgTime'>
+                    {bestOfFifty ? defaultTimeFormat(bestOfFifty) : ''}
                   </p>
                 </div>
               )}
@@ -356,9 +371,11 @@ const Session = ({
               {solveHistory.length >= 100 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Avg of 100:</p>
-                  <p className='sessionAvgTime'>{averageOfHundred}</p>
                   <p className='sessionAvgTime'>
-                    {bestOfHundred ? bestOfHundred.toFixed(2) : ''}
+                    {defaultTimeFormat(averageOfHundred)}
+                  </p>
+                  <p className='sessionAvgTime'>
+                    {bestOfHundred ? defaultTimeFormat(bestOfHundred) : ''}
                   </p>
                 </div>
               )}

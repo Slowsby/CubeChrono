@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { defaultTimeFormat } from '../../utils/defaultTimeFormat';
 import './Timer.css';
 
 const Timer = ({ onTimerStopped, darkTheme, solveHistory }) => {
@@ -118,11 +119,14 @@ const Timer = ({ onTimerStopped, darkTheme, solveHistory }) => {
     if (!isRunning && solveHistory.length > 0) {
       // If a solve history exists, show the last entry.
       // If a time is deleted in History component, it will correctly update
-      return solveHistory[solveHistory.length - 1].time.toFixed(2);
+      return defaultTimeFormat(
+        solveHistory[solveHistory.length - 1].time,
+        false
+      );
     } else if (!isRunning) {
-      return secondsPassed.toFixed(2); // show the initial number
+      return defaultTimeFormat(secondsPassed, false); // show the initial number
     } else if (isRunning) {
-      return secondsPassed.toFixed(1); // When timer is running, only show the tenths
+      return defaultTimeFormat(secondsPassed, true); // When timer is running, only show the tenths
     }
   };
   return (

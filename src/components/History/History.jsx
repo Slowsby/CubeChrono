@@ -5,8 +5,9 @@ import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
-import './History.css';
 import Alert from 'react-bootstrap/Alert';
+import { defaultTimeFormat } from '../../utils/defaultTimeFormat';
+import './History.css';
 
 const History = ({
   solveHistory,
@@ -41,7 +42,7 @@ const History = ({
               className={darkTheme ? 'timeDark' : 'time'}
               onClick={() => handleShow(index, el.date)}
             >
-              {el.dnf ? `DNF` : el.time.toFixed(2)}
+              {el.dnf ? `DNF` : defaultTimeFormat(el.time)}
               <span className='penaltyHistory'>
                 {el.dnf ? '' : el.penalty ? `+2` : ''}
               </span>
@@ -68,13 +69,13 @@ const History = ({
   const renderModal = () => {
     const finalTime = (index) => {
       if (solveHistory[index].penalty && solveHistory[index].dnf) {
-        return `DNF (${solveHistory[index].time.toFixed(2)}+2)`;
+        return `DNF (${defaultTimeFormat(solveHistory[index].time)}+2)`;
       } else if (solveHistory[index].penalty) {
-        return `${solveHistory[index].time.toFixed(2)}+2`;
+        return `${defaultTimeFormat(solveHistory[index].time)}+2`;
       } else {
         return solveHistory[index].dnf
-          ? `DNF (${solveHistory[index].time.toFixed(2)})`
-          : solveHistory[index].time.toFixed(2);
+          ? `DNF (${defaultTimeFormat(solveHistory[index].time)})`
+          : defaultTimeFormat(solveHistory[index].time);
       }
     };
     const localDate = selectedDate
