@@ -155,7 +155,10 @@ const App = () => {
               darkTheme={darkTheme}
               solveHistory={currentSessionHistory}
             />
-            <Average solveHistory={solveHistory} darkTheme={darkTheme} />
+            <Average
+              solveHistory={currentSessionHistory}
+              darkTheme={darkTheme}
+            />
           </Col>
           <Col xxl={2} className='d-flex flex-column justify-content-center'>
             <Session
