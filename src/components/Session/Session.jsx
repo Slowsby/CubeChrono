@@ -8,13 +8,17 @@ import './Session.css';
 
 const Session = ({
   darkTheme,
-  solveHistory,
+  importScrambleChoice,
   exportSession,
-  clearSolveHistory
+  solveHistory,
+  exportScrambleChoice,
+  clearSolveHistory,
+  deleteAll
 }) => {
-  const [session, setSession] = useState(['session1']);
+  const [session, setSession] = useState([
+    { id: 'session1', name: 'Session 1', lastChoice: '333' }
+  ]);
   const [currentSession, setCurrentSession] = useState('session1');
-  const [sessionName, setSessionName] = useState(['Session 1']);
   const [meanOfThree, setMeanOfThree] = useState(null);
   const [bestMeanOfThree, setBestMeanOfThree] = useState(null);
 
@@ -42,19 +46,21 @@ const Session = ({
     const storedStates = JSON.parse(localStorage.getItem('states'));
     if (storedStates) {
       setSession(storedStates.sessionArr);
-      setSessionName(storedStates.sessionNameArr);
       setCurrentSession(storedStates.currentSession);
     }
   }, []);
 
   useEffect(() => {
+    const toFind = session.findIndex((obj) => obj.id === currentSession);
+    session[toFind].lastChoice = importScrambleChoice;
+  });
+  useEffect(() => {
     const states = {
       sessionArr: session,
-      sessionNameArr: sessionName,
       currentSession: currentSession
     };
     localStorage.setItem('states', JSON.stringify(states));
-  }, [session, sessionName, currentSession]);
+  }, [session, currentSession]);
   useEffect(() => {
     const calculateAvg = (n) => {
       const sort = [...solveHistory]
@@ -172,8 +178,8 @@ const Session = ({
       // Exctract answer to window.prompt with a 20 char limit
       let answer = window
         .prompt(
-          `[ ${sessionName[session.findIndex((el) => el === currentSession)]} ] \nRename or type 'delete' to delete the session\n`,
-          sessionName[session.findIndex((el) => el === currentSession)]
+          `[ ${session[session.findIndex((obj) => obj.id === currentSession)].name} ] \n----\nRename or type 'delete' to delete the session\n----\n`,
+          session[session.findIndex((obj) => obj.id === currentSession)].name
         )
         .slice(0, 20);
       // If empty or cancelled, return.
@@ -186,48 +192,61 @@ const Session = ({
           return;
         }
         //Find the current session index
-        const toRemove = session.findIndex((el) => el === currentSession);
+        const toRemove = session.findIndex((obj) => obj.id === currentSession);
 
         const updatedSessions = [...session];
-        const updatedSessionNames = [...sessionName];
         // Remove the current session
         updatedSessions.splice(toRemove, 1);
-        // Remove the current session's name
-        updatedSessionNames.splice(toRemove, 1);
 
         // Clear solveHistory from all solves with the session ID
         clearSolveHistory(session[toRemove]);
         // Update the session and sessionName array with the deleted session
         setSession(updatedSessions);
-        setSessionName(updatedSessionNames);
         // Select the first option after deleting
-        setCurrentSession(updatedSessions[0]);
+        setCurrentSession(updatedSessions[0].id);
+        exportScrambleChoice(
+          session[session.findIndex((obj) => obj.id === event.target.value)]
+            .lastChoice
+        );
       } else {
         // if not empty and not "delete", rename session
         // Find index of the current session
-        const toRename = session.findIndex((el) => el === currentSession);
-        const updatedSessionNames = [...sessionName];
+        const toRename = session.findIndex((obj) => obj.id === currentSession);
+        const updatedSessionNames = [...session];
         // Set the current session name with the prompt answer
-        updatedSessionNames[toRename] = answer;
-        // Update sessionName array
-        setSessionName(updatedSessionNames);
+        updatedSessionNames[toRename].name = answer;
+        setSession(updatedSessionNames);
       }
       // If selected the "New Session" option
     } else if (event.target.value === 'newSession') {
       // create new session
-      // Generate a unique ID for the session ID
-      const newSession = uuidv4();
-      // Add the new session ID to the session array
+      const newSession = {
+        id: uuidv4(),
+        name: `Session ${session.length + 1}`
+      };
       setSession((prevSession) => [...prevSession, newSession]);
-      // Add a name to the new session
-      setSessionName((prevSession) => [
-        ...prevSession,
-        `Session ` + (prevSession.length + 1)
-      ]);
-      //
-      setCurrentSession(newSession);
+      setCurrentSession(newSession.id);
+      exportScrambleChoice(
+        session[session.findIndex((obj) => obj.id === event.target.value)]
+          .lastChoice
+      );
+    } else if (event.target.value === 'deleteAll') {
+      let answer = window.prompt(
+        `!! WARNING !!\n----\nTHIS WILL DELETE YOUR ENTIRE HISTORY ACROSS EVERY SESSIONS\n----\nType 'Yes' to confirm.\n----\n`
+      );
+      if (answer.toLowerCase() === 'yes') {
+        deleteAll();
+        setSession([{ id: 'session1', name: 'Session 1', lastChoice: '333' }]);
+        setCurrentSession('session1');
+      } else {
+        setCurrentSession(session[0].id);
+      }
     } else {
       setCurrentSession(event.target.value);
+      exportScrambleChoice(
+        session[session.findIndex((obj) => obj.id === event.target.value)]
+          .lastChoice
+      );
     }
   };
   return (
@@ -252,8 +271,8 @@ const Session = ({
             >
               {session.map((el, index) => {
                 return (
-                  <option key={index} value={el}>
-                    {sessionName[index]}
+                  <option key={index} value={el.id}>
+                    {session[index].name}
                   </option>
                 );
               })}
@@ -262,6 +281,9 @@ const Session = ({
               </option>
               <option className='extOpt' value='newSession'>
                 New Session
+              </option>
+              <option className='extOpt warn' value='deleteAll'>
+                Clear History
               </option>
             </select>
           </form>

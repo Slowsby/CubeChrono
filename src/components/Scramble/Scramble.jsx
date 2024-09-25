@@ -10,6 +10,8 @@ import './Scramble.css';
 const Scramble = ({
   toScramble,
   onScrambleGenerated,
+  importScrambleChoice,
+  exportScrambleChoice,
   changeTheme,
   darkTheme
 }) => {
@@ -25,6 +27,9 @@ const Scramble = ({
   };
 
   useEffect(() => {
+    setScrambleChoice(importScrambleChoice);
+  }, [importScrambleChoice]);
+  useEffect(() => {
     setSearchDebug({
       logPerf: true
     });
@@ -33,6 +38,10 @@ const Scramble = ({
       setScrambleChoice(storedScrambleChoice);
     }
   }, []);
+
+  useEffect(() => {
+    exportScrambleChoice(scrambleChoice);
+  }, [scrambleChoice]);
 
   useEffect(() => {
     generateScramble();

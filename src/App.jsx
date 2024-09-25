@@ -9,6 +9,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 
 const App = () => {
   const [toScramble, setToScramble] = useState(false);
+  const [scrambleChoice, setScrambleChoice] = useState('333');
   // On Timer stopped, saves Time, Scramble and adds it as an object in the solveHistory array with addToHistory().
   const [solveTime, setSolveTime] = useState(0);
   const [solveScramble, setSolveScramble] = useState('');
@@ -96,10 +97,19 @@ const App = () => {
     );
     setSolveHistory(updatedSolveHistory);
   };
+  const deleteAll = () => {
+    setSolveHistory([]);
+    localStorage.removeItem('solveHistory');
+    localStorage.removeItem('states');
+  };
 
   // Set currentSession that will be used by currentSessionHistory
   const exportSession = (currentSession) => {
     setSession(currentSession);
+  };
+
+  const exportScrambleChoice = (scramble) => {
+    setScrambleChoice(scramble);
   };
 
   useEffect(() => {
@@ -129,6 +139,8 @@ const App = () => {
     <>
       <Scramble
         toScramble={toScramble}
+        exportScrambleChoice={exportScrambleChoice}
+        importScrambleChoice={scrambleChoice}
         onScrambleGenerated={setSolveScramble}
         changeTheme={() => setDarkTheme((prev) => !prev)}
         darkTheme={darkTheme}
@@ -163,9 +175,12 @@ const App = () => {
           <Col xxl={2} className='d-flex flex-column justify-content-center'>
             <Session
               darkTheme={darkTheme}
+              importScrambleChoice={scrambleChoice}
+              exportScrambleChoice={exportScrambleChoice}
               solveHistory={currentSessionHistory}
               exportSession={exportSession}
               clearSolveHistory={clearSolveHistory}
+              deleteAll={deleteAll}
             />
           </Col>
         </Row>
