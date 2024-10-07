@@ -55,6 +55,9 @@ hr {
 }
 .sessionTime {
   font-size: 1.5em;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 #placeholder {
   margin-top: 5px;
@@ -77,7 +80,43 @@ hr {
 .sessionAvgTime {
   font-size: 1.2em;
   font-weight: 500;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 .avgSession {
   line-height: 20px;
+}
+
+.modalBody {
+  text-align: center;
+  color: black;
+  background-color: #e3e8ee;
+}
+.inputTime {
+  width: 25%;
+  text-align: center;
+}
+.inputScramble {
+  width: 100%;
+  text-align: center;
+}
+.modalHeader {
+  background-color: #d6dbe1;
+  color: black;
+}
+.noresize {
+  resize: none;
+}
+.customModal {
+  max-width: 60%;
+  width: 60%;
+}
+
+#dark {
+  color: white;
+}
+.inputScramble.textarea {
+  align-content: left;
+  text-align: left;
 }

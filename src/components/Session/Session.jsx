@@ -3,8 +3,14 @@ import { v4 as uuidv4 } from 'uuid';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Modal from 'react-bootstrap/Modal';
 import { defaultTimeFormat } from '../../utils/defaultTimeFormat';
+import { SessionModal } from './sessionModals';
 import './Session.css';
+
+//
+// NEEDS refactoring
+//
 
 const Session = ({
   darkTheme,
@@ -19,28 +25,40 @@ const Session = ({
     { id: 'session1', name: 'Session 1', lastChoice: '333' }
   ]);
   const [currentSession, setCurrentSession] = useState('session1');
-  const [meanOfThree, setMeanOfThree] = useState(null);
-  const [bestMeanOfThree, setBestMeanOfThree] = useState(null);
+  const [meanOfThree, setMeanOfThree] = useState({});
+  const [bestMeanOfThree, setBestMeanOfThree] = useState({});
 
-  const [averageOfFive, setAverageOfFive] = useState(null);
-  const [bestOfFive, setBestOfFive] = useState(null);
+  const [averageOfFive, setAverageOfFive] = useState({});
+  const [bestOfFive, setBestOfFive] = useState({});
 
-  const [averageOfTwelve, setAverageOfTwelve] = useState(null);
-  const [bestOfTwelve, setBestOfTwelve] = useState(null);
+  const [averageOfTwelve, setAverageOfTwelve] = useState({});
+  const [bestOfTwelve, setBestOfTwelve] = useState({});
 
-  const [averageOfTwentyFive, setAverageOfTwentyFive] = useState(null);
-  const [bestOfTwentyFive, setBestOfTwentyFive] = useState(null);
+  const [averageOfTwentyFive, setAverageOfTwentyFive] = useState({});
+  const [bestOfTwentyFive, setBestOfTwentyFive] = useState({});
 
-  const [averageOfFifty, setAverageOfFifty] = useState(null);
-  const [bestOfFifty, setBestOfFifty] = useState(null);
+  const [averageOfFifty, setAverageOfFifty] = useState({});
+  const [bestOfFifty, setBestOfFifty] = useState({});
 
-  const [averageOfHundred, setAverageOfHundred] = useState(null);
-  const [bestOfHundred, setBestOfHundred] = useState(null);
+  const [averageOfHundred, setAverageOfHundred] = useState({});
+  const [bestOfHundred, setBestOfHundred] = useState({});
 
-  const [bestTime, setBestTime] = useState(null);
-  const [worstTime, setWorstTime] = useState(null);
-
+  const [bestTime, setBestTime] = useState([]);
+  const [showBestTime, setShowBestTime] = useState(false);
+  const [worstTime, setWorstTime] = useState([]);
+  const [showWorstTime, setShowWorstTime] = useState(false);
   const [meanTotal, setMeanTotal] = useState(null);
+
+  // Modal props
+  const [show, setShow] = useState(false);
+  const [current, setCurrent] = useState(false);
+  const [n, setN] = useState(3);
+  const [data, setData] = useState([]);
+
+  const handleModal = (arr) => {
+    setShow(true);
+    setData(arr);
+  };
 
   useEffect(() => {
     const storedStates = JSON.parse(localStorage.getItem('states'));
@@ -67,22 +85,22 @@ const Session = ({
         // Filter out DNF'd times
         .filter((el) => !el.dnf)
         .sort((a, b) => a.time - b.time);
-      setBestTime(sort[0]?.time);
-      setWorstTime(sort[sort.length - 1]?.time);
+      setBestTime(sort[0]);
+      setWorstTime(sort[sort.length - 1]);
       // Calculate Mean of 3
       if (n === 3) {
         // Check if the length is the correct number, else return null
         if (solveHistory.length >= n) {
           const lastNSolves = solveHistory.slice(-n).reverse();
-          const dnfNumber = lastNSolves.filter((el) => el.dnf === true);
+          const dnfNumber = [...lastNSolves].filter((el) => el.dnf === true);
           // If one time is "DNF", return "DNF"
           if (dnfNumber.length >= 1) {
-            return 'DNF';
+            return { output: 'DNF', arr: lastNSolves };
           } else {
             const average = (
               lastNSolves.reduce((acc, el) => acc + el.time, 0) / n
             ).toFixed(2);
-            return average;
+            return { output: average, arr: lastNSolves };
           }
         } else {
           return null;
@@ -91,18 +109,18 @@ const Session = ({
       // Calculate all AVG in the Session component
       if (solveHistory.length >= n) {
         const lastNSolves = solveHistory.slice(-n).reverse();
-        const sortedArray = lastNSolves.sort((a, b) => a.time - b.time);
-        const dnfNumber = lastNSolves.filter((el) => el.dnf === true);
+        const sortedArray = [...lastNSolves].sort((a, b) => a.time - b.time);
+        const dnfNumber = [...lastNSolves].filter((el) => el.dnf === true);
         // If two time are "DNF", return "DNF"
         if (dnfNumber.length >= 2) {
-          return 'DNF';
+          return { output: 'DNF', arr: lastNSolves };
         } else {
           const middleThree = sortedArray.slice(1, -1);
           const average = (
             middleThree.reduce((acc, el) => acc + el.time, 0) /
             (n - 2)
           ).toFixed(2);
-          return average;
+          return { output: average, arr: lastNSolves };
         }
       } else {
         return null;
@@ -131,34 +149,39 @@ const Session = ({
     const calculateBestAvg = (n) => {
       if (n === 3) {
         let bestAverage = Infinity;
+        let bestArr = [];
         for (let i = 0; i <= solveHistory.length - n; i++) {
           const window = solveHistory.slice(i, i + n);
-          window.sort((a, b) => a.time - b.time);
-          const average = window.reduce((acc, el) => acc + el.time, 0) / n;
+          const sortedWindow = [...window].sort((a, b) => a.time - b.time);
+          const average =
+            sortedWindow.reduce((acc, el) => acc + el.time, 0) / n;
           if (average < bestAverage) {
             bestAverage = average;
+            bestArr = window;
           }
         }
-        return bestAverage;
+        return { output: bestAverage, arr: bestArr };
       }
       let bestAverage = Infinity;
+      let bestArr = [];
 
       // If n = 5
       // first window = [0-4], calculates avg  and compares
       // next window = [1-5], calculates avg and compares
       for (let i = 0; i <= solveHistory.length - n; i++) {
         const window = solveHistory.slice(i, i + n);
-        window.sort((a, b) => a.time - b.time);
+        const sortedWindow = [...window].sort((a, b) => a.time - b.time);
         // As in Average.jsx, cubing avg is calculated without the slowest and fastest time, so we slice them out
-        const trimmedWindow = window.slice(1, -1);
+        const trimmedWindow = sortedWindow.slice(1, -1);
         const average =
           trimmedWindow.reduce((acc, el) => acc + el.time, 0) / (n - 2);
         // If the calcuated average is smaller than the last, replace it.
         if (average < bestAverage) {
           bestAverage = average;
+          bestArr = window;
         }
       }
-      return bestAverage;
+      return { output: bestAverage, arr: bestArr };
     };
     setBestMeanOfThree(calculateBestAvg(3));
     setBestOfFive(calculateBestAvg(5));
@@ -299,26 +322,125 @@ const Session = ({
             <div>
               <h6>Best time</h6>
               <hr />
-              <p
+              <a
                 className='sessionTime'
                 id={
-                  bestTime ? '' : darkTheme ? 'placeholderDark' : 'placeholder'
+                  bestTime?.time
+                    ? darkTheme
+                      ? 'dark'
+                      : ''
+                    : darkTheme
+                      ? 'placeholderDark'
+                      : 'placeholder'
                 }
+                onClick={() => setShowBestTime(true)}
               >
-                {bestTime ? defaultTimeFormat(bestTime) : 'N/A'}
-              </p>
+                {bestTime?.time ? defaultTimeFormat(bestTime.time) : 'N/A'}
+              </a>
+              <Modal show={showBestTime} onHide={() => setShowBestTime(false)}>
+                <Modal.Header className='modalHeader' closeButton>
+                  <Modal.Title>Best Time</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='modalBody'>
+                  <p>
+                    Date
+                    <br />
+                    <input
+                      className='inputScramble'
+                      value={new Date(bestTime?.date).toLocaleString()}
+                      readOnly
+                    ></input>
+                  </p>
+                  <p>
+                    Time <br />
+                    <input
+                      className='inputTime'
+                      value={defaultTimeFormat(bestTime?.time)}
+                      readOnly
+                    ></input>
+                  </p>
+                  <p>
+                    Scramble
+                    <br />
+                    <input
+                      className='inputScramble'
+                      value={bestTime?.scramble}
+                      readOnly
+                    ></input>
+                  </p>
+                  <p>
+                    Plain text
+                    <textarea
+                      className='inputScramble noresize'
+                      value={`B: ${defaultTimeFormat(bestTime?.time)}, ${bestTime?.scramble}`}
+                      readOnly
+                    ></textarea>
+                  </p>
+                </Modal.Body>
+              </Modal>
             </div>
             <div>
               <h6>Worst Time</h6>
               <hr />
-              <p
+              <a
                 className='sessionTime'
                 id={
-                  bestTime ? '' : darkTheme ? 'placeholderDark' : 'placeholder'
+                  bestTime?.time
+                    ? darkTheme
+                      ? 'dark'
+                      : ''
+                    : darkTheme
+                      ? 'placeholderDark'
+                      : 'placeholder'
                 }
+                onClick={() => setShowWorstTime(true)}
               >
-                {worstTime ? defaultTimeFormat(worstTime) : 'N/A'}
-              </p>
+                {worstTime?.time ? defaultTimeFormat(worstTime.time) : 'N/A'}
+              </a>
+              <Modal
+                show={showWorstTime}
+                onHide={() => setShowWorstTime(false)}
+              >
+                <Modal.Header className='modalHeader' closeButton>
+                  <Modal.Title>Worst Time</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='modalBody'>
+                  <p>
+                    Date
+                    <br />
+                    <input
+                      className='inputScramble'
+                      value={new Date(worstTime?.date).toLocaleString()}
+                      readOnly
+                    ></input>
+                  </p>
+                  <p>
+                    Time <br />
+                    <input
+                      className='inputTime'
+                      value={defaultTimeFormat(worstTime?.time)}
+                      readOnly
+                    ></input>
+                  </p>
+                  <p>
+                    Scramble
+                    <br />
+                    <input
+                      className='inputScramble'
+                      value={worstTime?.scramble}
+                      readOnly
+                    ></input>
+                  </p>
+                  <p>
+                    Plain text
+                    <textarea
+                      className='inputScramble noresize'
+                      value={`W: ${defaultTimeFormat(worstTime?.time)}, ${worstTime?.scramble}`}
+                      readOnly
+                    ></textarea>
+                  </p>
+                </Modal.Body>
+              </Modal>
             </div>
           </div>
           <hr />
@@ -332,74 +454,192 @@ const Session = ({
               {solveHistory.length >= 3 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Mean of 3:</p>
-                  <p className='sessionAvgTime'>
-                    {defaultTimeFormat(meanOfThree)}
-                  </p>
-                  <p className='sessionAvgTime'>
-                    {defaultTimeFormat(bestMeanOfThree)}
-                  </p>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(meanOfThree);
+                      setN(3);
+                      setCurrent(true);
+                    }}
+                  >
+                    {meanOfThree?.output === 'DNF'
+                      ? 'DNF'
+                      : defaultTimeFormat(meanOfThree?.output)}
+                  </a>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(bestMeanOfThree);
+                      setN(3);
+                      setCurrent(false);
+                    }}
+                  >
+                    {defaultTimeFormat(bestMeanOfThree.output)}
+                  </a>
                 </div>
               )}
               {solveHistory.length >= 5 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Avg of 5:</p>
-                  <p className='sessionAvgTime'>
-                    {defaultTimeFormat(averageOfFive)}
-                  </p>
-                  <p className='sessionAvgTime'>
-                    {bestOfFive ? defaultTimeFormat(bestOfFive) : ''}
-                  </p>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(averageOfFive);
+                      setN(5);
+                      setCurrent(true);
+                    }}
+                  >
+                    {averageOfFive?.output === 'DNF'
+                      ? 'DNF'
+                      : defaultTimeFormat(averageOfFive?.output)}
+                  </a>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(bestOfFive);
+                      setN(5);
+                      setCurrent(false);
+                    }}
+                  >
+                    {bestOfFive ? defaultTimeFormat(bestOfFive.output) : ''}
+                  </a>
                 </div>
               )}
 
               {solveHistory.length >= 12 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Avg of 12:</p>
-                  <p className='sessionAvgTime'>
-                    {defaultTimeFormat(averageOfTwelve)}
-                  </p>
-                  <p className='sessionAvgTime'>
-                    {bestOfTwelve ? defaultTimeFormat(bestOfTwelve) : ''}
-                  </p>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(averageOfTwelve);
+                      setN(12);
+                      setCurrent(true);
+                    }}
+                  >
+                    {averageOfTwelve?.output === 'DNF'
+                      ? 'DNF'
+                      : defaultTimeFormat(averageOfTwelve?.output)}
+                  </a>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(bestOfTwelve);
+                      setN(12);
+                      setCurrent(false);
+                    }}
+                  >
+                    {bestOfTwelve ? defaultTimeFormat(bestOfTwelve.output) : ''}
+                  </a>
                 </div>
               )}
-
               {solveHistory.length >= 25 && (
                 <div className='avgSession d-flex justify-content-between'>
-                  <p style={{ width: '80px' }}>Avg of 25:</p>
-                  <p className='sessionAvgTime'>
-                    {defaultTimeFormat(averageOfTwentyFive)}
-                  </p>
-                  <p className='sessionAvgTime'>
+                  <p style={{ width: '80px' }}>Avg of 50:</p>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(averageOfTwentyFive);
+                      setN(25);
+                      setCurrent(true);
+                    }}
+                  >
+                    {averageOfTwentyFive?.output === 'DNF'
+                      ? 'DNF'
+                      : defaultTimeFormat(averageOfTwentyFive?.output)}
+                  </a>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(bestOfTwentyFive);
+                      setN(25);
+                      setCurrent(false);
+                    }}
+                  >
                     {bestOfTwentyFive
-                      ? defaultTimeFormat(bestOfTwentyFive)
+                      ? defaultTimeFormat(bestOfTwentyFive?.output)
                       : ''}
-                  </p>
+                  </a>
                 </div>
               )}
 
               {solveHistory.length >= 50 && (
                 <div className='avgSession d-flex justify-content-between'>
                   <p style={{ width: '80px' }}>Avg of 50:</p>
-                  <p className='sessionAvgTime'>
-                    {defaultTimeFormat(averageOfFifty)}
-                  </p>
-                  <p className='sessionAvgTime'>
-                    {bestOfFifty ? defaultTimeFormat(bestOfFifty) : ''}
-                  </p>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(averageOfFifty);
+                      setN(50);
+                      setCurrent(true);
+                    }}
+                  >
+                    {averageOfFifty?.output === 'DNF'
+                      ? 'DNF'
+                      : defaultTimeFormat(averageOfFifty?.output)}
+                  </a>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(bestOfFifty);
+                      setN(50);
+                      setCurrent(false);
+                    }}
+                  >
+                    {bestOfFifty ? defaultTimeFormat(bestOfFifty?.output) : ''}
+                  </a>
                 </div>
               )}
 
               {solveHistory.length >= 100 && (
                 <div className='avgSession d-flex justify-content-between'>
-                  <p style={{ width: '80px' }}>Avg of 100:</p>
-                  <p className='sessionAvgTime'>
-                    {defaultTimeFormat(averageOfHundred)}
-                  </p>
-                  <p className='sessionAvgTime'>
-                    {bestOfHundred ? defaultTimeFormat(bestOfHundred) : ''}
-                  </p>
+                  <p style={{ width: '80px' }}>Avg of 100:</p>{' '}
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(averageOfHundred);
+                      setN(100);
+                      setCurrent(true);
+                    }}
+                  >
+                    {averageOfHundred?.output === 'DNF'
+                      ? 'DNF'
+                      : defaultTimeFormat(averageOfHundred?.output)}
+                  </a>
+                  <a
+                    id={darkTheme ? 'dark' : ''}
+                    className='sessionAvgTime'
+                    onClick={() => {
+                      handleModal(bestOfHundred);
+                      setN(100);
+                      setCurrent(false);
+                    }}
+                  >
+                    {bestOfHundred
+                      ? defaultTimeFormat(bestOfHundred?.output)
+                      : ''}
+                  </a>
                 </div>
+              )}
+              {show && (
+                <SessionModal
+                  data={data}
+                  show={show}
+                  setShow={setShow}
+                  current={current}
+                  n={n}
+                />
               )}
             </div>
           </div>
