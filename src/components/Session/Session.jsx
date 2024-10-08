@@ -49,6 +49,7 @@ const Session = ({
   const [showWorstTime, setShowWorstTime] = useState(false);
   const [meanTotal, setMeanTotal] = useState(null);
 
+  const [solveShow, setSolveShow] = useState(false);
   // Modal props
   const [show, setShow] = useState(false);
   const [current, setCurrent] = useState(false);
@@ -311,11 +312,48 @@ const Session = ({
             </select>
           </form>
           <div>
-            <h5>
-              {/*Show the total amount of valid solves / All solves */}
-              Solve {solveHistory.filter((el) => !el.dnf).length}/
-              {solveHistory.length}
-            </h5>
+            <a
+              onClick={() => {
+                setSolveShow(solveHistory);
+              }}
+              id={darkTheme ? 'dark' : ''}
+              className='sessionAvgTime'
+            >
+              <h5>
+                {/*Show the total amount of valid solves / All solves */}
+                Solve {solveHistory.filter((el) => !el.dnf).length}/
+                {solveHistory.length}
+              </h5>
+            </a>
+            <Modal
+              show={solveShow}
+              onHide={() => setSolveShow(false)}
+              dialogClassName='customModal'
+              aria-labelledby='customModal'
+            >
+              <Modal.Header className='modalHeader' closeButton>
+                <Modal.Title id='customModal'>
+                  Solves {solveHistory.filter((el) => !el.dnf).length}/
+                  {solveHistory.length}
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body className='modalBody'>
+                <p>
+                  <textarea
+                    rows={20}
+                    className='inputScramble textarea'
+                    value={solveHistory
+                      .map(
+                        (el, index) =>
+                          `- ${index + 1}: ${defaultTimeFormat(el.time)}, ${el.scramble}`
+                      )
+                      .join('\n')}
+                    readOnly
+                  ></textarea>
+                </p>
+              </Modal.Body>
+            </Modal>
+
             <h6>Mean : {meanTotal ? defaultTimeFormat(meanTotal) : ''}</h6>
           </div>
           <div className='sessionBandWTime d-flex justify-content-between'>
