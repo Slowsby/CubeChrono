@@ -60,7 +60,7 @@ export const SessionModal = ({ data, show, setShow, current, n }) => {
             value={arr
               .map(
                 (el, index) =>
-                  `- ${index + 1}: ${defaultTimeFormat(el.time)}, ${el.scramble}`
+                  `- ${index + 1}: ${el.dnf ? `DNF(${defaultTimeFormat(el.time)})` : el.penalty ? `(${defaultTimeFormat(el.time)})+2` : defaultTimeFormat(el.time)}, ${el.scramble}`
               )
               .join('\n')}
             readOnly
