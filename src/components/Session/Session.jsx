@@ -580,7 +580,7 @@ const Session = ({
               )}
               {solveHistory.length >= 25 && (
                 <div className='avgSession d-flex justify-content-between'>
-                  <p style={{ width: '80px' }}>Avg of 50:</p>
+                  <p style={{ width: '80px' }}>Avg of 25:</p>
                   <a
                     id={darkTheme ? 'dark' : ''}
                     className='sessionAvgTime'
