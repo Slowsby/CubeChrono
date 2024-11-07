@@ -15,6 +15,7 @@ const App = () => {
   const [solveScramble, setSolveScramble] = useState('');
   const [solveHistory, setSolveHistory] = useState([]);
   const [darkTheme, setDarkTheme] = useState(false);
+  const [isFocusModeActive, setIsFocusModeActive] = useState(false);
   const [session, setSession] = useState('session1');
   const [currentSessionHistory, setCurrentSessionHistory] = useState([]);
 
@@ -22,13 +23,17 @@ const App = () => {
   useEffect(() => {
     const storedHistory = localStorage.getItem('solveHistory');
     const storedTheme = localStorage.getItem('darkTheme');
-
+    const storedSettings = localStorage.getItem('settings');
+    const parsedSettings = JSON.parse(storedSettings);
     if (storedHistory) {
       setSolveHistory(JSON.parse(storedHistory));
     }
 
     if (storedTheme) {
       setDarkTheme(JSON.parse(storedTheme));
+    }
+    if (parsedSettings) {
+      setIsFocusModeActive(parsedSettings.focus);
     }
   }, []);
 
@@ -144,10 +149,14 @@ const App = () => {
         onScrambleGenerated={setSolveScramble}
         changeTheme={() => setDarkTheme((prev) => !prev)}
         darkTheme={darkTheme}
+        focus={() => setIsFocusModeActive((prev) => !prev)}
       />
       <Container fluid>
         <Row>
-          <Col xxl={2} className='d-flex flex-column justify-content-center'>
+          <Col
+            xxl={2}
+            className={`d-flex flex-column justify-content-center ${isFocusModeActive ? 'focusHidden' : ''}`}
+          >
             <History
               solveHistory={currentSessionHistory}
               darkTheme={darkTheme}
@@ -171,8 +180,11 @@ const App = () => {
               solveHistory={currentSessionHistory}
               darkTheme={darkTheme}
             />
-          </Col>
-          <Col xxl={2} className='d-flex flex-column justify-content-center'>
+          </Col>{' '}
+          <Col
+            xxl={2}
+            className={`d-flex flex-column justify-content-center ${isFocusModeActive ? 'focusHidden' : ''}`}
+          >
             <Session
               darkTheme={darkTheme}
               importScrambleChoice={scrambleChoice}

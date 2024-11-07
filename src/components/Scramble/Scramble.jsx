@@ -14,7 +14,8 @@ const Scramble = ({
   importScrambleChoice,
   exportScrambleChoice,
   changeTheme,
-  darkTheme
+  darkTheme,
+  focus
 }) => {
   const [scramble, setScramble] = useState('');
   const [lastScramble, setLastScramble] = useState('');
@@ -153,7 +154,12 @@ const Scramble = ({
         </Col>
       </Row>
       <hr />
-      <Settings show={show} setShow={setShow} />
+      <Settings
+        show={show}
+        setShow={setShow}
+        changeTheme={changeTheme}
+        focus={focus}
+      />
     </Container>
   );
 };
