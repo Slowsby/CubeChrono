@@ -10,6 +10,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 const App = () => {
   const [toScramble, setToScramble] = useState(false);
   const [scrambleChoice, setScrambleChoice] = useState('333');
+  const [isRunning, setIsRunning] = useState('false');
   // On Timer stopped, saves Time, Scramble and adds it as an object in the solveHistory array with addToHistory().
   const [solveTime, setSolveTime] = useState(0);
   const [solveScramble, setSolveScramble] = useState('');
@@ -19,6 +20,9 @@ const App = () => {
   const [session, setSession] = useState('session1');
   const [currentSessionHistory, setCurrentSessionHistory] = useState([]);
 
+  useEffect(() => {
+    console.log('isRunning' + isRunning);
+  }, [isRunning]);
   // Load data from localStorage
   useEffect(() => {
     const storedHistory = localStorage.getItem('solveHistory');
@@ -117,6 +121,9 @@ const App = () => {
     setScrambleChoice(scramble);
   };
 
+  const handleRunning = (bool) => {
+    setIsRunning(bool);
+  };
   useEffect(() => {
     if (solveTime && solveScramble) {
       addToHistory(Number(solveTime), solveScramble, session);
@@ -150,6 +157,8 @@ const App = () => {
         changeTheme={() => setDarkTheme((prev) => !prev)}
         darkTheme={darkTheme}
         focus={() => setIsFocusModeActive((prev) => !prev)}
+        isFocusModeActive={isFocusModeActive}
+        isRunning={isRunning}
       />
       <Container fluid>
         <Row>
@@ -169,12 +178,13 @@ const App = () => {
           </Col>
           <Col
             xxl={8}
-            className='d-flex flex-column justify-content-center order-first order-xxl-0'
+            className={`d-flex flex-column justify-content-center order-first order-xxl-0 ${isFocusModeActive ? (isRunning ? 'focusHidden' : 'show') : 'show'}`}
           >
             <Timer
               onTimerStopped={handleTimerStopped}
               darkTheme={darkTheme}
               solveHistory={currentSessionHistory}
+              exportRunning={handleRunning}
             />
             <Average
               solveHistory={currentSessionHistory}

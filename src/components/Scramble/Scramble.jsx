@@ -15,11 +15,14 @@ const Scramble = ({
   exportScrambleChoice,
   changeTheme,
   darkTheme,
-  focus
+  focus,
+  updateFocus,
+  isRunning
 }) => {
   const [scramble, setScramble] = useState('');
   const [lastScramble, setLastScramble] = useState('');
   const [scrambleChoice, setScrambleChoice] = useState('333');
+  const [isFocusModeActive, setIsFocusModeActive] = useState('false');
   const [show, setShow] = useState(false);
 
   const generateScramble = async () => {
@@ -28,6 +31,11 @@ const Scramble = ({
     setScramble(toGenerate.toString());
     onScrambleGenerated(toGenerate.toString());
   };
+
+  useEffect(() => {
+    setIsFocusModeActive(!isFocusModeActive);
+    console.log(isFocusModeActive);
+  }, [updateFocus]);
 
   useEffect(() => {
     setScrambleChoice(importScrambleChoice);
@@ -39,6 +47,11 @@ const Scramble = ({
     const storedScrambleChoice = localStorage.getItem('scrambleChoice');
     if (storedScrambleChoice) {
       setScrambleChoice(storedScrambleChoice);
+    }
+    const settings = localStorage.getItem('settings');
+    const parsedSettings = JSON.parse(settings);
+    if (settings) {
+      setIsFocusModeActive(parsedSettings.focus);
     }
   }, []);
 
@@ -96,6 +109,7 @@ const Scramble = ({
         <Col
           onTouchEnd={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
+          className={`${isFocusModeActive ? 'focusHidden' : ''}`}
         >
           <Button
             variant='link'
@@ -115,7 +129,7 @@ const Scramble = ({
             Next
           </Button>
         </Col>
-        <Col className='text-center'>
+        <Col className={`${isFocusModeActive ? 'focusHidden' : 'text-center'}`}>
           <form
             className='scrambleChoiceForm'
             onTouchEnd={(e) => e.stopPropagation()}
@@ -149,11 +163,15 @@ const Scramble = ({
         </Col>
       </Row>
       <Row className='justify-content-center'>
-        <Col className='col-auto'>
+        <Col
+          className={`col-auto ${isFocusModeActive && isRunning ? 'focusHidden' : 'show'}`}
+        >
           <h1 className='scramble'>{scramble}</h1>
         </Col>
       </Row>
-      <hr />
+      <hr
+        className={`${isFocusModeActive && isRunning ? 'focusHidden' : 'show'}`}
+      />
       <Settings
         show={show}
         setShow={setShow}

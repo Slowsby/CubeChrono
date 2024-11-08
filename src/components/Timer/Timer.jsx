@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import { defaultTimeFormat } from '../../utils/defaultTimeFormat';
 import './Timer.css';
 
-const Timer = ({ onTimerStopped, darkTheme, solveHistory }) => {
+const Timer = ({ onTimerStopped, darkTheme, solveHistory, exportRunning }) => {
   const [startTime, setStartTime] = useState(null);
   const [now, setNow] = useState(null);
   const intervalRef = useRef(null);
@@ -109,6 +109,7 @@ const Timer = ({ onTimerStopped, darkTheme, solveHistory }) => {
 
   // If a startTime exists and the timer stopped running, it exports the current time
   useEffect(() => {
+    exportRunning(isRunning);
     if (!isRunning && startTime) {
       const solvingTime = ((now - startTime) / 1000).toFixed(2);
       onTimerStopped(solvingTime);
