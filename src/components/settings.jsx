@@ -2,9 +2,14 @@ import Modal from 'react-bootstrap/Modal';
 import React, { useEffect, useState } from 'react';
 import './settings.css';
 
-export const Settings = ({ show, setShow, changeTheme, focus }) => {
+export const Settings = ({
+  show,
+  setShow,
+  changeTheme,
+  focus,
+  updateInspection
+}) => {
   const [isInspectionChecked, setIsInspectionChecked] = useState(false);
-  const [inspectionTime, setInspectionTime] = useState(15);
   const [isFocusModeChecked, setIsFocusModeChecked] = useState(false);
   const [isDrawScrambleChecked, setIsDrawScrambleChecked] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -19,7 +24,6 @@ export const Settings = ({ show, setShow, changeTheme, focus }) => {
       const parsedSettings = JSON.parse(settings);
       setIsFocusModeChecked(parsedSettings.focus);
       setIsInspectionChecked(parsedSettings.inspection);
-      setInspectionTime(parsedSettings.inspectionTime);
     }
   }, []);
 
@@ -28,11 +32,13 @@ export const Settings = ({ show, setShow, changeTheme, focus }) => {
       'settings',
       JSON.stringify({
         focus: isFocusModeChecked,
-        inspection: isInspectionChecked,
-        inspectionTime: inspectionTime
+        inspection: isInspectionChecked
       })
     );
-  }, [isFocusModeChecked, isInspectionChecked, inspectionTime]);
+  }, [isFocusModeChecked, isInspectionChecked]);
+  useEffect(() => {
+    updateInspection();
+  }, [isInspectionChecked]);
   useEffect(() => {
     focus();
   }, [isFocusModeChecked]);
@@ -93,18 +99,9 @@ export const Settings = ({ show, setShow, changeTheme, focus }) => {
             onChange={() => handleChecks('inspection')}
           />
         </div>
-        <div
-          className={`${isInspectionChecked ? 'd-flex' : 'd-none'} flew-row justify-content-between`}
-        >
-          <p>Inspection Timer (seconds)</p>
-          <input
-            type='number'
-            size={3}
-            value={inspectionTime}
-            onChange={(e) => setInspectionTime(e.target.value)}
-          />
-        </div>
-        <div className='d-flex flex-row justify-content-between'>
+        {/*
+        Draw Scramble option
+       <div className='d-flex flex-row justify-content-between'>
           <p>Draw Scramble</p>
           <input
             type='checkbox'
@@ -112,7 +109,8 @@ export const Settings = ({ show, setShow, changeTheme, focus }) => {
             checked={isDrawScrambleChecked}
             onChange={() => handleChecks('drawScramble')}
           />
-        </div>
+        </div> 
+        */}
       </Modal.Body>
     </Modal>
   );

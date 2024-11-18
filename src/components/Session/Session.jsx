@@ -307,7 +307,7 @@ const Session = ({
                 New Session
               </option>
               <option className='extOpt warn' value='deleteAll'>
-                Clear History
+                Delete All
               </option>
             </select>
           </form>

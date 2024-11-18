@@ -6,6 +6,7 @@ import History from './components/History/History';
 import Session from './components/Session/Session';
 import './App.css';
 import { Col, Container, Row } from 'react-bootstrap';
+import { parse } from 'uuid';
 
 const App = () => {
   const [toScramble, setToScramble] = useState(false);
@@ -17,12 +18,10 @@ const App = () => {
   const [solveHistory, setSolveHistory] = useState([]);
   const [darkTheme, setDarkTheme] = useState(false);
   const [isFocusModeActive, setIsFocusModeActive] = useState(false);
+  const [isInspectionActive, setIsInspectionActive] = useState(false);
   const [session, setSession] = useState('session1');
   const [currentSessionHistory, setCurrentSessionHistory] = useState([]);
 
-  useEffect(() => {
-    console.log('isRunning' + isRunning);
-  }, [isRunning]);
   // Load data from localStorage
   useEffect(() => {
     const storedHistory = localStorage.getItem('solveHistory');
@@ -38,9 +37,13 @@ const App = () => {
     }
     if (parsedSettings) {
       setIsFocusModeActive(parsedSettings.focus);
+      setIsInspectionActive(parsedSettings.inspection);
     }
   }, []);
 
+  useEffect(() => {
+    console.log(isInspectionActive);
+  }, [isInspectionActive]);
   const handleTimerStopped = (solvingTime) => {
     setSolveTime(solvingTime);
     setToScramble((prev) => !prev);
@@ -157,7 +160,8 @@ const App = () => {
         changeTheme={() => setDarkTheme((prev) => !prev)}
         darkTheme={darkTheme}
         focus={() => setIsFocusModeActive((prev) => !prev)}
-        isFocusModeActive={isFocusModeActive}
+        updateFocus={isFocusModeActive}
+        updateInspection={() => setIsInspectionActive((prev) => !prev)}
         isRunning={isRunning}
       />
       <Container fluid>
@@ -185,6 +189,7 @@ const App = () => {
               darkTheme={darkTheme}
               solveHistory={currentSessionHistory}
               exportRunning={handleRunning}
+              isInspectionActive={isInspectionActive}
             />
             <Average
               solveHistory={currentSessionHistory}

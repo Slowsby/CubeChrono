@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Settings } from '../settings';
 import './Scramble.css';
+import '../../App.css';
 
 const Scramble = ({
   toScramble,
@@ -17,6 +18,7 @@ const Scramble = ({
   darkTheme,
   focus,
   updateFocus,
+  updateInspection,
   isRunning
 }) => {
   const [scramble, setScramble] = useState('');
@@ -31,6 +33,14 @@ const Scramble = ({
     setScramble(toGenerate.toString());
     onScrambleGenerated(toGenerate.toString());
   };
+
+  useEffect(() => {
+    const settings = localStorage.getItem('settings');
+    const parsedSettings = JSON.parse(settings);
+    if (settings) {
+      setIsFocusModeActive(parsedSettings.focus);
+    }
+  }, []);
 
   useEffect(() => {
     setIsFocusModeActive(!isFocusModeActive);
@@ -129,7 +139,9 @@ const Scramble = ({
             Next
           </Button>
         </Col>
-        <Col className={`${isFocusModeActive ? 'focusHidden' : 'text-center'}`}>
+        <Col
+          className={`${isFocusModeActive ? 'focusHidden' : 'show text-center'}`}
+        >
           <form
             className='scrambleChoiceForm'
             onTouchEnd={(e) => e.stopPropagation()}
@@ -177,6 +189,7 @@ const Scramble = ({
         setShow={setShow}
         changeTheme={changeTheme}
         focus={focus}
+        updateInspection={updateInspection}
       />
     </Container>
   );
