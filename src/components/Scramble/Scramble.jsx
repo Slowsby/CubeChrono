@@ -26,7 +26,9 @@ const Scramble = ({
   const [scrambleChoice, setScrambleChoice] = useState('333');
   const [isFocusModeActive, setIsFocusModeActive] = useState('false');
   const [show, setShow] = useState(false);
-
+  setSearchDebug({
+    logPerf: false // Disable console info like scramble generation durations.
+  });
   const generateScramble = async () => {
     setLastScramble(scramble);
     const toGenerate = await randomScrambleForEvent(scrambleChoice);
@@ -44,7 +46,6 @@ const Scramble = ({
 
   useEffect(() => {
     setIsFocusModeActive(!isFocusModeActive);
-    console.log(isFocusModeActive);
   }, [updateFocus]);
 
   useEffect(() => {

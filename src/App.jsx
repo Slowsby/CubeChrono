@@ -6,7 +6,6 @@ import History from './components/History/History';
 import Session from './components/Session/Session';
 import './App.css';
 import { Col, Container, Row } from 'react-bootstrap';
-import { parse } from 'uuid';
 
 const App = () => {
   const [toScramble, setToScramble] = useState(false);
@@ -21,6 +20,7 @@ const App = () => {
   const [isInspectionActive, setIsInspectionActive] = useState(false);
   const [session, setSession] = useState('session1');
   const [currentSessionHistory, setCurrentSessionHistory] = useState([]);
+  const [lastInspectionPenalty, setLastInspectionPenalty] = useState('');
 
   // Load data from localStorage
   useEffect(() => {
@@ -41,15 +41,34 @@ const App = () => {
     }
   }, []);
 
-  useEffect(() => {
-    console.log(isInspectionActive);
-  }, [isInspectionActive]);
-  const handleTimerStopped = (solvingTime) => {
+  const handleTimerStopped = (solvingTime, penalty) => {
+    setLastInspectionPenalty(penalty);
     setSolveTime(solvingTime);
     setToScramble((prev) => !prev);
   };
 
   const addToHistory = (solveTime, solveScramble, session) => {
+    if (lastInspectionPenalty == '+2') {
+      const newSolve = {
+        time: solveTime + 2,
+        scramble: solveScramble,
+        session: session, // session allows to filter the array for the current session
+        date: Date.now(), // sets date of the solve in ms, also used as a unique ID to manipulate the array in the children components
+        penalty: true
+      };
+      setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
+      return;
+    } else if (lastInspectionPenalty == 'DNF') {
+      const newSolve = {
+        time: solveTime,
+        scramble: solveScramble,
+        session: session, // session allows to filter the array for the current session
+        date: Date.now(), // sets date of the solve in ms, also used as a unique ID to manipulate the array in the children components
+        dnf: true
+      };
+      setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
+      return;
+    }
     const newSolve = {
       time: solveTime,
       scramble: solveScramble,

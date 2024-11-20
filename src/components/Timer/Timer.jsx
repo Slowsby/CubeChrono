@@ -26,7 +26,9 @@ const Timer = ({
   const [inspectionCountdownStarted, setInspectionCountdownStarted] =
     useState(false);
   const [inspectionStarted, setInspectionStarted] = useState(false);
-  const [pauseInspection, setPauseInspection] = useState(true);
+  const [inspectionTimeEnd, setInspectionTimeEnd] = useState(15);
+  const [registerInspectionTime, setRegisterInspectionTime] = useState(false);
+  const [penalty, setPenalty] = useState('');
 
   const handleStart = () => {
     setStartTime(Date.now());
@@ -51,9 +53,6 @@ const Timer = ({
   const spaceDown = (e) => {
     if (e.code === 'Space' || e.type === 'touchstart') {
       setSpaceHeld(true);
-      if (isInspectionActive && inspectionStarted) {
-        setPauseInspection(true);
-      }
       if (isRunning) {
         setRunning(false);
         handleStop();
@@ -78,11 +77,13 @@ const Timer = ({
           handleStart();
           // Starts Inspection countdown
         } else if (isInspectionActive && !inspectionStarted) {
-          setPauseInspection(false);
           setInspectionCountdownStarted(true);
           setInspectionStarted(true);
           // Starts normal timer after Inspection countdown
         } else if (isInspectionActive && inspectionStarted) {
+          if (inspectionCountdownStarted) {
+            setRegisterInspectionTime(true);
+          }
           setInspectionStarted(false);
           setInspectionCountdownStarted(false);
           setRunning(true);
@@ -122,15 +123,12 @@ const Timer = ({
   useEffect(() => {
     if (isSpaceHeld && !isRunning && !ignore) {
       if (isInspectionActive) {
-        if (inspectionCountdownStarted) {
-          setColor('green');
-        }
-        setColor('green');
+        setColor('red');
         setIgnoreSpaceUp(true); // Ignore Space UP for 350ms to not accidentally start the timer
         const timer = setTimeout(() => {
           setColor('green'); // Turns green when timer can run
           setIgnoreSpaceUp(false);
-        }, 50);
+        }, 200);
         return () => {
           clearTimeout(timer);
         };
@@ -154,28 +152,40 @@ const Timer = ({
     exportRunning(isRunning);
     if (!isRunning && startTime) {
       const solvingTime = ((now - startTime) / 1000).toFixed(2);
-      onTimerStopped(solvingTime);
+      isInspectionActive
+        ? onTimerStopped(solvingTime, penalty)
+        : onTimerStopped(solvingTime, 'none');
     }
-  }, [isRunning]);
+  }, [isRunning, penalty]);
 
+  useEffect(() => {
+    if (inspectionTimeEnd <= 0 && inspectionTimeEnd > -2) {
+      setPenalty('+2');
+    } else if (inspectionTimeEnd <= -2) {
+      setPenalty('DNF');
+    } else {
+      setPenalty(`${inspectionTimeEnd}`);
+    }
+  }, [inspectionTimeEnd]);
+
+  useEffect(() => {
+    if (registerInspectionTime) {
+      setInspectionTimeEnd(inspectionCountdown);
+    }
+    setRegisterInspectionTime(false);
+  }, [registerInspectionTime, inspectionCountdown]);
   // INSPECTION COUNTDOWN
   useEffect(() => {
     if (inspectionCountdownStarted == true) {
       setInspectionCountdown(15);
       const inspectionInterval = setInterval(() => {
         setInspectionCountdown((prevTime) => {
-          if (prevTime == -2) {
-            clearInterval(inspectionInterval);
-            setInspectionCountdown(-2);
-            setInspectionStarted(false);
-          } else {
-            return prevTime - 1;
-          }
+          return prevTime - 1;
         });
       }, 1000);
       return () => clearInterval(inspectionInterval);
     }
-  }, [inspectionCountdownStarted]);
+  }, [inspectionCountdownStarted, inspectionTimeEnd]);
 
   const renderTime = () => {
     if (!isRunning && solveHistory.length > 0) {
@@ -200,14 +210,9 @@ const Timer = ({
     }
   };
   const renderCountDown = () => {
-    if (pauseInspection) {
-      setInspectionCountdownStarted(false);
-      setPauseInspection(false);
-      return inspectionCountdown;
-    }
     if (inspectionCountdown <= 0 && inspectionCountdown > -2) {
       return '+2';
-    } else if (inspectionCountdown == -2) return 'DNF';
+    } else if (inspectionCountdown <= -2) return 'DNF';
     else {
       return inspectionCountdown;
     }
@@ -216,53 +221,16 @@ const Timer = ({
     <Container fluid>
       <Row className='justify-content-center'>
         <Col className='col-auto'>
-          <svg
-            className={
-              isInspectionActive && !isRunning && !inspectionCountdownStarted
-                ? 'show'
-                : 'focusHidden'
-            }
-            width='32px'
-            height='32px'
-            viewBox='0 0 3333.000000 3333.000000'
-          >
-            <g
-              transform='translate(0.000000,3333.000000) scale(0.100000,-0.100000)'
+          <svg width='48px' height='48px' viewBox='0 0 512 512'>
+            <path
+              className={
+                isInspectionActive && !inspectionStarted && !isRunning
+                  ? 'show'
+                  : 'focusHidden'
+              }
               fill='#74777b'
-              stroke='none'
-            >
-              <path
-                d='M13779 33310 c-2670 -110 -5168 -912 -7353 -2360 -1111 -736 -2116
--1623 -2976 -2625 -990 -1155 -1779 -2435 -2360 -3831 -593 -1423 -952 -2952
--1060 -4519 -43 -621 -41 -1372 5 -2010 169 -2336 906 -4590 2148 -6565 940
--1494 2139 -2796 3552 -3857 1694 -1271 3639 -2145 5715 -2568 757 -154 1472
--240 2290 -276 296 -13 1134 -7 1395 10 1269 84 2340 281 3491 642 1658 520
-3282 1388 4624 2472 l155 125 3780 -3777 c2079 -2078 3809 -3800 3845 -3828
-211 -163 411 -260 640 -309 117 -25 353 -25 470 -1 531 112 971 501 1128 997
-133 421 52 865 -226 1235 -25 33 -1521 1538 -3326 3345 -1805 1807 -3515 3520
--3800 3807 l-519 521 130 164 c1053 1327 1844 2787 2373 4378 647 1947 868
-4033 644 6085 -397 3647 -2181 6995 -4994 9375 -1967 1663 -4336 2761 -6875
-3184 -515 86 -1041 144 -1605 176 -246 14 -1045 20 -1291 10z m1036 -2800
-c1663 -79 3183 -472 4635 -1196 933 -466 1756 -1025 2555 -1734 193 -172 723
--702 895 -895 1263 -1423 2130 -3049 2585 -4850 557 -2203 451 -4549 -302
--6670 -1090 -3067 -3414 -5526 -6418 -6790 -970 -408 -2025 -685 -3085 -809
--473 -56 -835 -76 -1360 -76 -525 0 -878 20 -1360 76 -2129 248 -4160 1099
--5846 2450 -714 573 -1388 1262 -1948 1993 -1284 1674 -2090 3690 -2305 5766
--50 476 -56 613 -56 1230 0 618 7 772 56 1225 259 2413 1246 4631 2875 6460
-168 189 567 594 764 775 1651 1522 3689 2524 5883 2894 430 73 960 130 1387
-150 258 12 805 12 1045 1z'
-              />
-              <path
-                d='M21755 26094 c-99 -22 -209 -67 -285 -115 -49 -32 -1274 -1251 -5050
--5025 l-4985 -4984 -2518 2538 c-1385 1395 -2556 2571 -2602 2612 -121 110
--222 165 -376 207 -87 24 -298 23 -394 0 -91 -23 -235 -92 -310 -150 -33 -25
--483 -470 -1001 -989 -684 -685 -952 -961 -983 -1008 -93 -146 -137 -316 -128
--500 9 -174 61 -323 159 -455 67 -90 7593 -7662 7660 -7707 286 -190 616 -203
-915 -37 74 40 431 396 6286 6248 6757 6754 6288 6277 6354 6462 43 116 57 217
-50 347 -9 163 -59 308 -151 436 -25 34 -471 487 -993 1008 -989 988 -1003
-1000 -1148 1061 -103 43 -175 58 -305 62 -91 4 -144 0 -195 -11z'
-              />
-            </g>
+              d='M179.594 20.688v41.406h143.25V20.687h-143.25zM256.03 82C143.04 82 51.25 173.727 51.25 286.656c0 112.93 91.788 204.656 204.78 204.656 112.994 0 204.75-91.728 204.75-204.656C460.78 173.73 369.025 82 256.03 82zm0 35.625c93.42 0 169.126 75.665 169.126 169.03 0 93.368-75.706 169.564-169.125 169.564-93.417 0-169.155-76.197-169.155-169.564 0-93.366 75.736-169.03 169.156-169.03zm76.19 20.28l-72.47 107.5c10.67 1.036 20.516 6.045 27.625 13.814l44.844-121.314zm-85.533 1.064v45.31c3.077-.275 6.196-.405 9.344-.405 3.155 0 6.263.13 9.345.406v-45.31h-18.688zm-88.53 36.655l-13.22 13.22L177 220.874c3.992-4.784 8.432-9.198 13.22-13.188l-32.064-32.062zm195.75 0l-32.063 32.063c4.786 3.99 9.196 8.403 13.187 13.187l32.064-32.03-13.188-13.22zm-98.344 81.22c-2.08.01-4.195.243-6.313.686-16.948 3.544-27.7 20.005-24.156 36.94 3.544 16.932 20.02 27.698 36.97 24.155 16.946-3.543 27.7-20.004 24.155-36.938-3.102-14.816-16.104-24.925-30.658-24.843zM108.28 277.31V296h45.314c-.278-3.08-.406-6.192-.406-9.344 0-3.146.13-6.27.406-9.344H108.28zm250.157 0c.277 3.075.438 6.197.438 9.344 0 3.153-.16 6.264-.438 9.344h45.344v-18.688H358.44zm-60.062 6.72c.993 10.522-1.968 20.742-7.813 28.937l124 19.092-116.187-48.03zM176.97 352.405l-32.032 32.03 13.218 13.22 32.063-32.03c-4.798-4-9.253-8.424-13.25-13.22zm158.093 0c-4 4.796-8.423 9.22-13.22 13.22l32.063 32.03 13.188-13.22-32.03-32.03zM246.688 389v45.313h18.687V389c-3.082.278-6.19.438-9.344.438-3.147 0-6.266-.16-9.342-.438z'
+            />
           </svg>
 
           <h1
