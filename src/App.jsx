@@ -10,19 +10,24 @@ import { Col, Container, Row } from 'react-bootstrap';
 const App = () => {
   const [toScramble, setToScramble] = useState(false);
   const [scrambleChoice, setScrambleChoice] = useState('333');
+  const [isRunning, setIsRunning] = useState('false');
   // On Timer stopped, saves Time, Scramble and adds it as an object in the solveHistory array with addToHistory().
   const [solveTime, setSolveTime] = useState(0);
   const [solveScramble, setSolveScramble] = useState('');
   const [solveHistory, setSolveHistory] = useState([]);
   const [darkTheme, setDarkTheme] = useState(false);
+  const [isFocusModeActive, setIsFocusModeActive] = useState(false);
+  const [isInspectionActive, setIsInspectionActive] = useState(false);
   const [session, setSession] = useState('session1');
   const [currentSessionHistory, setCurrentSessionHistory] = useState([]);
+  const [lastInspectionPenalty, setLastInspectionPenalty] = useState('');
 
   // Load data from localStorage
   useEffect(() => {
     const storedHistory = localStorage.getItem('solveHistory');
     const storedTheme = localStorage.getItem('darkTheme');
-
+    const storedSettings = localStorage.getItem('settings');
+    const parsedSettings = JSON.parse(storedSettings);
     if (storedHistory) {
       setSolveHistory(JSON.parse(storedHistory));
     }
@@ -30,14 +35,40 @@ const App = () => {
     if (storedTheme) {
       setDarkTheme(JSON.parse(storedTheme));
     }
+    if (parsedSettings) {
+      setIsFocusModeActive(parsedSettings.focus);
+      setIsInspectionActive(parsedSettings.inspection);
+    }
   }, []);
 
-  const handleTimerStopped = (solvingTime) => {
+  const handleTimerStopped = (solvingTime, penalty) => {
+    setLastInspectionPenalty(penalty);
     setSolveTime(solvingTime);
     setToScramble((prev) => !prev);
   };
 
   const addToHistory = (solveTime, solveScramble, session) => {
+    if (lastInspectionPenalty == '+2') {
+      const newSolve = {
+        time: solveTime + 2,
+        scramble: solveScramble,
+        session: session, // session allows to filter the array for the current session
+        date: Date.now(), // sets date of the solve in ms, also used as a unique ID to manipulate the array in the children components
+        penalty: true
+      };
+      setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
+      return;
+    } else if (lastInspectionPenalty == 'DNF') {
+      const newSolve = {
+        time: solveTime,
+        scramble: solveScramble,
+        session: session, // session allows to filter the array for the current session
+        date: Date.now(), // sets date of the solve in ms, also used as a unique ID to manipulate the array in the children components
+        dnf: true
+      };
+      setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
+      return;
+    }
     const newSolve = {
       time: solveTime,
       scramble: solveScramble,
@@ -112,6 +143,9 @@ const App = () => {
     setScrambleChoice(scramble);
   };
 
+  const handleRunning = (bool) => {
+    setIsRunning(bool);
+  };
   useEffect(() => {
     if (solveTime && solveScramble) {
       addToHistory(Number(solveTime), solveScramble, session);
@@ -144,10 +178,17 @@ const App = () => {
         onScrambleGenerated={setSolveScramble}
         changeTheme={() => setDarkTheme((prev) => !prev)}
         darkTheme={darkTheme}
+        focus={() => setIsFocusModeActive((prev) => !prev)}
+        updateFocus={isFocusModeActive}
+        updateInspection={() => setIsInspectionActive((prev) => !prev)}
+        isRunning={isRunning}
       />
       <Container fluid>
         <Row>
-          <Col xxl={2} className='d-flex flex-column justify-content-center'>
+          <Col
+            xxl={2}
+            className={`d-flex flex-column justify-content-center ${isFocusModeActive ? 'focusHidden' : ''}`}
+          >
             <History
               solveHistory={currentSessionHistory}
               darkTheme={darkTheme}
@@ -160,19 +201,24 @@ const App = () => {
           </Col>
           <Col
             xxl={8}
-            className='d-flex flex-column justify-content-center order-first order-xxl-0'
+            className={`d-flex flex-column justify-content-center order-first order-xxl-0 ${isFocusModeActive ? (isRunning ? 'focusHidden' : 'show') : 'show'}`}
           >
             <Timer
               onTimerStopped={handleTimerStopped}
               darkTheme={darkTheme}
               solveHistory={currentSessionHistory}
+              exportRunning={handleRunning}
+              isInspectionActive={isInspectionActive}
             />
             <Average
               solveHistory={currentSessionHistory}
               darkTheme={darkTheme}
             />
-          </Col>
-          <Col xxl={2} className='d-flex flex-column justify-content-center'>
+          </Col>{' '}
+          <Col
+            xxl={2}
+            className={`d-flex flex-column justify-content-center ${isFocusModeActive ? 'focusHidden' : ''}`}
+          >
             <Session
               darkTheme={darkTheme}
               importScrambleChoice={scrambleChoice}

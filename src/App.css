@@ -8,3 +8,15 @@
   background-color: #202020;
   color: #f6f6f6;
 }
+
+.focusHidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease;
+}
+
+.show {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease;
+}
