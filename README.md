@@ -14,7 +14,8 @@ You can start the timer using "**Space**"
 - **Settings** Customize the theme, activate focus mode and/or inspection mode.
 ## Themes
 
-![Untitled-2](https://github.com/user-attachments/assets/73b382b7-61dc-4993-9299-1ca67d32cd6d)
+![CubeChrono](https://github.com/user-attachments/assets/6938d8f8-d3fd-463e-9e0b-22e5723697d7)
+
 
 
 ## Running
