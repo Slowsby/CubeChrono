@@ -2,7 +2,7 @@
 
 [CubeChrono](https://slowsby.github.io/CubeChrono/) is a feature-rich yet simple Rubik's Cube timer made in React.
 
-You can start the timer using "**Space**"
+You can start the timer by pressing the `Space` key or by clicking on the timer and entering your time.
 
 ## Features
 
