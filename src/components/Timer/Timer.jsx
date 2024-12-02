@@ -68,6 +68,9 @@ const Timer = ({
 
   // Starts the timer on Space UP
   const spaceUp = (e) => {
+    if (e.code === 'Escape') {
+      setInputActive(false);
+    }
     if (e.code === 'Space' || e.type === 'touchend') {
       setSpaceHeld(false);
       if (!isRunning && !ignoreSpaceUp && !isInputActive) {

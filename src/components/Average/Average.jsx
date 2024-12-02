@@ -133,7 +133,7 @@ const Average = ({ solveHistory, darkTheme }) => {
         <Col className='col-auto'>
           <OverlayTrigger
             rootClose // close when clicking outside
-            trigger='click'
+            trigger={solveHistory[0] ? 'click' : ''}
             key='bottom'
             placement='bottom'
             overlay={averagePopover(5)}
@@ -148,7 +148,7 @@ const Average = ({ solveHistory, darkTheme }) => {
         <Col className='col-auto'>
           <OverlayTrigger
             rootClose
-            trigger='click'
+            trigger={solveHistory[0] ? 'click' : ''}
             key='bottom'
             placement='bottom'
             overlay={averagePopover(12)}

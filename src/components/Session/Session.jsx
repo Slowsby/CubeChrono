@@ -314,7 +314,9 @@ const Session = ({
           <div>
             <a
               onClick={() => {
-                setSolveShow(solveHistory);
+                if (solveHistory[0]) {
+                  setSolveShow(solveHistory);
+                }
               }}
               id={darkTheme ? 'dark' : ''}
               className='sessionAvgTime'
@@ -372,7 +374,11 @@ const Session = ({
                       ? 'placeholderDark'
                       : 'placeholder'
                 }
-                onClick={() => setShowBestTime(true)}
+                onClick={() => {
+                  if (bestTime.time) {
+                    setShowBestTime(true);
+                  }
+                }}
               >
                 {bestTime?.time ? defaultTimeFormat(bestTime.time) : 'N/A'}
               </a>
@@ -432,7 +438,11 @@ const Session = ({
                       ? 'placeholderDark'
                       : 'placeholder'
                 }
-                onClick={() => setShowWorstTime(true)}
+                onClick={() => {
+                  if (worstTime.time) {
+                    setShowWorstTime(true);
+                  }
+                }}
               >
                 {worstTime?.time ? defaultTimeFormat(worstTime.time) : 'N/A'}
               </a>
