@@ -4,6 +4,7 @@ import Timer from './components/Timer/Timer';
 import Average from './components/Average/Average';
 import History from './components/History/History';
 import Session from './components/Session/Session';
+import { scrambleToTwisty } from './utils/scrambleChoiceToTwisty';
 import './App.css';
 import { Col, Container, Row } from 'react-bootstrap';
 
@@ -18,6 +19,7 @@ const App = () => {
   const [darkTheme, setDarkTheme] = useState(false);
   const [isFocusModeActive, setIsFocusModeActive] = useState(false);
   const [isInspectionActive, setIsInspectionActive] = useState(false);
+  const [isDrawScrambleActive, setIsDrawScrambleActive] = useState(false);
   const [session, setSession] = useState('session1');
   const [currentSessionHistory, setCurrentSessionHistory] = useState([]);
   const [lastInspectionPenalty, setLastInspectionPenalty] = useState('');
@@ -39,6 +41,7 @@ const App = () => {
       setIsFocusModeActive(parsedSettings.focus);
       setIsInspectionActive(parsedSettings.inspection);
     }
+    setIsDrawScrambleActive(false);
   }, []);
 
   const handleTimerStopped = (solvingTime, penalty) => {
@@ -181,6 +184,7 @@ const App = () => {
         focus={() => setIsFocusModeActive((prev) => !prev)}
         updateFocus={isFocusModeActive}
         updateInspection={() => setIsInspectionActive((prev) => !prev)}
+        updateDrawScramble={() => setIsDrawScrambleActive((prev) => !prev)}
         isRunning={isRunning}
       />
       <Container fluid>
@@ -230,6 +234,23 @@ const App = () => {
             />
           </Col>
         </Row>
+        {isDrawScrambleActive ? (
+          <twisty-player
+            class={
+              isDrawScrambleActive && isRunning && isFocusModeActive
+                ? 'focusHidden'
+                : 'show'
+            }
+            experimental-setup-alg={solveScramble}
+            experimental-setup-anchor='end'
+            puzzle={scrambleToTwisty(scrambleChoice)}
+            visualization='2D'
+            background='none'
+            back-view='none'
+            control-panel='none'
+            style={{ width: '20vw', height: '30vh' }}
+          />
+        ) : null}
       </Container>
     </>
   );

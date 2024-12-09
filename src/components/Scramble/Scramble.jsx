@@ -19,6 +19,7 @@ const Scramble = ({
   focus,
   updateFocus,
   updateInspection,
+  updateDrawScramble,
   isRunning
 }) => {
   const [scramble, setScramble] = useState('');
@@ -191,6 +192,7 @@ const Scramble = ({
         changeTheme={changeTheme}
         focus={focus}
         updateInspection={updateInspection}
+        updateDrawScramble={updateDrawScramble}
       />
     </Container>
   );

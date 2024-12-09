@@ -7,13 +7,13 @@ export const Settings = ({
   setShow,
   changeTheme,
   focus,
-  updateInspection
+  updateInspection,
+  updateDrawScramble
 }) => {
   const [isInspectionChecked, setIsInspectionChecked] = useState(false);
   const [isFocusModeChecked, setIsFocusModeChecked] = useState(false);
   const [isDrawScrambleChecked, setIsDrawScrambleChecked] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
-
   useEffect(() => {
     const darkmode = localStorage.getItem('darkTheme');
     if (darkmode) {
@@ -36,12 +36,18 @@ export const Settings = ({
       })
     );
   }, [isFocusModeChecked, isInspectionChecked]);
+
   useEffect(() => {
     updateInspection();
   }, [isInspectionChecked]);
+
   useEffect(() => {
     focus();
   }, [isFocusModeChecked]);
+
+  useEffect(() => {
+    updateDrawScramble();
+  }, [isDrawScrambleChecked]);
   const handleChecks = (item) => {
     switch (item.toString()) {
       case 'focusmode':
@@ -99,9 +105,7 @@ export const Settings = ({
             onChange={() => handleChecks('inspection')}
           />
         </div>
-        {/*
-        Draw Scramble option
-       <div className='d-flex flex-row justify-content-between'>
+        <div className='d-flex flex-row justify-content-between'>
           <p>Draw Scramble</p>
           <input
             type='checkbox'
@@ -109,8 +113,7 @@ export const Settings = ({
             checked={isDrawScrambleChecked}
             onChange={() => handleChecks('drawScramble')}
           />
-        </div> 
-        */}
+        </div>
       </Modal.Body>
     </Modal>
   );
