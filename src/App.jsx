@@ -57,7 +57,8 @@ const App = () => {
         scramble: solveScramble,
         session: session, // session allows to filter the array for the current session
         date: Date.now(), // sets date of the solve in ms, also used as a unique ID to manipulate the array in the children components
-        penalty: true
+        penalty: true,
+        puzzle: scrambleChoice
       };
       setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
       return;
@@ -67,7 +68,8 @@ const App = () => {
         scramble: solveScramble,
         session: session, // session allows to filter the array for the current session
         date: Date.now(), // sets date of the solve in ms, also used as a unique ID to manipulate the array in the children components
-        dnf: true
+        dnf: true,
+        puzzle: scrambleChoice
       };
       setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
       return;
@@ -76,7 +78,8 @@ const App = () => {
       time: solveTime,
       scramble: solveScramble,
       session: session, // session allows to filter the array for the current session
-      date: Date.now() // sets date of the solve in ms, also used as a unique ID to manipulate the array in the children components
+      date: Date.now(), // sets date of the solve in ms, also used as a unique ID to manipulate the array in the children components
+      puzzle: scrambleChoice
     };
     setSolveHistory((prevSolve) => [...prevSolve, newSolve]);
   };
