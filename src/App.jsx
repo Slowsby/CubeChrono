@@ -237,23 +237,32 @@ const App = () => {
             />
           </Col>
         </Row>
-        {isDrawScrambleActive ? (
-          <twisty-player
-            class={
-              isDrawScrambleActive && isRunning && isFocusModeActive
-                ? 'focusHidden'
-                : 'show'
-            }
-            experimental-setup-alg={solveScramble}
-            experimental-setup-anchor='end'
-            puzzle={scrambleToTwisty(scrambleChoice)}
-            visualization='2D'
-            background='none'
-            back-view='none'
-            control-panel='none'
-            style={{ width: '20vw', height: '30vh' }}
-          />
-        ) : null}
+        <Row>
+          <Col>
+            {isDrawScrambleActive ? (
+              <twisty-player
+                class={
+                  isDrawScrambleActive && isRunning && isFocusModeActive
+                    ? 'focusHidden'
+                    : 'show'
+                }
+                experimental-setup-alg={solveScramble}
+                experimental-setup-anchor='end'
+                puzzle={scrambleToTwisty(scrambleChoice)}
+                visualization='2D'
+                background='none'
+                back-view='none'
+                control-panel='none'
+                style={{ width: '20vw', height: '30vh' }}
+              />
+            ) : null}
+          </Col>
+          <Col xxl={2} className='d-flex justify-content-center'>
+            <div style={{ color: 'white' }} className='text-center'>
+              Info
+            </div>
+          </Col>
+        </Row>
       </Container>
     </>
   );
