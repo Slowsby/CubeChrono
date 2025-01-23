@@ -28,6 +28,7 @@ const Timer = ({
   const [inspectionStarted, setInspectionStarted] = useState(false);
   const [inspectionTimeEnd, setInspectionTimeEnd] = useState(15);
   const [registerInspectionTime, setRegisterInspectionTime] = useState(false);
+  const [escDnf, setEscDnf] = useState(false);
   const [penalty, setPenalty] = useState('');
 
   const handleStart = () => {
@@ -51,6 +52,12 @@ const Timer = ({
 
   //Stops the timer on Space DOWN.
   const spaceDown = (e) => {
+    if (e.code === 'Escape' && isRunning) {
+      setRunning(false);
+      handleStop();
+      setEscDnf(true);
+      return;
+    }
     if (e.code === 'Space' || e.type === 'touchstart') {
       setSpaceHeld(true);
       if (isRunning) {
@@ -74,6 +81,7 @@ const Timer = ({
     if (e.code === 'Space' || e.type === 'touchend') {
       setSpaceHeld(false);
       if (!isRunning && !ignoreSpaceUp && !isInputActive) {
+        setEscDnf(false);
         // Starts normal timer
         if (!isInspectionActive) {
           setRunning(true);
@@ -157,9 +165,12 @@ const Timer = ({
       const solvingTime = ((now - startTime) / 1000).toFixed(2);
       isInspectionActive
         ? onTimerStopped(solvingTime, penalty)
-        : onTimerStopped(solvingTime, 'none');
+        : // When ESC is pressed, cancels time, sends DNF penalty to the stopped time
+          escDnf
+          ? onTimerStopped(solvingTime, 'DNF')
+          : onTimerStopped(solvingTime, 'none');
     }
-  }, [isRunning, penalty]);
+  }, [isRunning, penalty, escDnf]);
 
   useEffect(() => {
     if (inspectionTimeEnd <= 0 && inspectionTimeEnd > -2) {
