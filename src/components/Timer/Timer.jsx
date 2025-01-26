@@ -251,8 +251,10 @@ const Timer = ({
             className='timer'
             style={{ color: isSpaceHeld ? color : '' }}
             onClick={() => {
-              setInputContent('');
-              setInputActive(true);
+              if (!isRunning) {
+                setInputContent('');
+                setInputActive(true);
+              }
             }}
           >
             {/*Click on the timer activates input,  pressing Enter validates the manual input*/}
