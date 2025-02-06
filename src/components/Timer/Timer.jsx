@@ -52,6 +52,10 @@ const Timer = ({
 
   //Stops the timer on Space DOWN.
   const spaceDown = (e) => {
+    if (isRunning) {
+      setRunning(false);
+      handleStop();
+    }
     if (e.code === 'Escape' && isRunning) {
       setRunning(false);
       handleStop();
